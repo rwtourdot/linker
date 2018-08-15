@@ -15,7 +15,7 @@ code requires bamtools, htslib, and c++11
 Description
 -----------
 
-<img src="https://github.com/rwtourdot/linker/tree/master/linker_flowchart.png" width=800/>
+<img src="https://github.com/rwtourdot/linker/blob/master/linker_flowchart.png" width=800/>
 
 Commands
 --------
