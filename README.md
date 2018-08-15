@@ -12,6 +12,9 @@ Installation
 
 code requires bamtools, htslib, and c++11
 
+htslib: https://github.com/samtools/htslib
+bamtools: https://github.com/pezmaster31/bamtools
+
 Description
 -----------
 
