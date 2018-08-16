@@ -1,10 +1,12 @@
 PROG=linker
-CC=c++ -o3 -std=c++11 #-shared
+CC=c++ -o3 -std=c++11                           # linux c++
+#CC=clang++ -std=c++11 -stdlib=libc++ -lz       # macos c++
 #CC=c++ -g -Wall -Wextra -std=c++11   #g++
+
 #LDIR=/usr/lib/x86_64-linux-gnu/
 LDIR=./packages/bamtools/lib/
 IDIR2=./htslib/
-LDIR2=./packages/htslib/lib/ 
+LDIR2=./packages/htslib/lib/
 IDIR=./packages/bamtools/include/bamtools/
 IDIR3=./packages/bamtools/lib/
 
@@ -30,8 +32,8 @@ all: $(TARGET)
 $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $(TARGET) $(LFLAGS) $(CFLAGS) $(LIBRARIES)
 
-$(SRCDIR)/%.o: $(SRCDIR)/%.cpp 
-	$(CC) $(LFLAGS) $(CFLAGS) -c -o $@ $< 
+$(SRCDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CC) $(LFLAGS) $(CFLAGS) -c -o $@ $<
 
 print-% : ; @echo $* = $($*)
 
@@ -39,7 +41,7 @@ print-% : ; @echo $* = $($*)
 clean:
 	-@rm $(OBJECTS)
 	-@rm -v $(TARGET)
-	
+
 distclean:
 	-@rm $(OBJECTS)
 	-@rm -v $(TARGET)

@@ -1,4 +1,4 @@
-## Linker - Long Read and Linked Read sequencing analysis tools
+## Linker - Analysis tools for Long Read and Linked Read Sequencing
 
 Table of contents
 =================
@@ -14,10 +14,11 @@ Installation
 
 code requires bamtools, htslib, c++11, and zlib
 
-htslib: https://github.com/samtools/htslib
-bamtools: https://github.com/pezmaster31/bamtools
+  * htslib: https://github.com/samtools/htslib
+  * bamtools: https://github.com/pezmaster31/bamtools
 
 From linker directory:
+
 Installing htslib locally
 ```
 git clone https://github.com/samtools/htslib
@@ -78,3 +79,10 @@ Commands
 ## 10X specific - find droplet based genome covereage
 ./linker bx_bin -h
 ```
+
+Input
+--------
+
+
+Output
+--------
