@@ -6,14 +6,41 @@ Table of contents
   * [Installation](#gh-md-toc)
   * [Description](#description)
   * [Commands](#commands)
+  * [Input](#input)
+  * [Output](#output)
 
 Installation
 ------------
 
-code requires bamtools, htslib, and c++11
+code requires bamtools, htslib, c++11, and zlib
 
-htslib: https://github.com/samtools/htslib  
+htslib: https://github.com/samtools/htslib
 bamtools: https://github.com/pezmaster31/bamtools
+
+From linker directory:
+Installing htslib locally
+```
+git clone https://github.com/samtools/htslib
+cd htslib
+autoheader
+autoconf
+./configure --prefix=/path/to/linker/packages/htslib/
+make
+make install
+cd ..
+```
+
+Installing bamtools locally
+```
+git clone git://github.com/pezmaster31/bamtools.git
+cd bamtools
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/path/to/linker/packages/bamtools/ ..
+make
+make install
+cd ../..
+```
 
 Description
 -----------
