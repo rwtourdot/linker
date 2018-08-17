@@ -6,8 +6,7 @@ Table of contents
   * [Installation](#gh-md-toc)
   * [Description](#description)
   * [Commands](#commands)
-  * [Input](#input)
-  * [Output](#output)
+  * [Input/Output](#input/output)
 
 Installation
 ------------
@@ -56,7 +55,20 @@ Commands
 ./linker -h
 ```
 
-#### Phase haplotypes from long and linked reads
+#### Flags
+  * -i: /path/to/input/bamfile
+  * -v: /path/to/input/vcffile
+  * -u: /path/to/input/svfile
+  * -l: /path/to/haplotype_solution_file
+  * -t: aneuploid (tumor) coverage file
+  * -m: diploid (normal) coverage file
+  * -e: sequencing technology (tenx,pacbio,nanopore,illumina)
+  * -c: chromosome (chr1,chr2,...,chrX)
+  * -s: (optional) second bam file /path/to/second/bamfile
+  * -n: (optional) id string for output files
+  * -b: (optional) binsize (default is 10kb - 10000)
+
+#### Phase germline haplotypes from long and linked reads
 
 ```
 ./linker phase -i ./input.bam -v het_sites.vcf -e pacbio -c chr4 -n august15
@@ -70,25 +82,37 @@ Commands
 
 Output is haplotype solution file: haplotype_solution.dat
 
+#### Extract Heterozygous site Coverage
+
+```
+./linker coverage -i ./input.bam -v het_sites.vcf -e tenx -c chr4 -n august15
+```
+  * -i: /path/to/input/bamfile
+  * -v: /path/to/input/vcffile
+  * -e: sequencing technology (tenx,pacbio,nanopore,illumina)
+  * -c: chromosome (chr1,chr2,...,chrX)
+  * -s: (optional) second bam file /path/to/second/bamfile
+  * -n: (optional) id string for output files
+
 #### Phase Aneuploid samples based on copy number
 
 ```
-./linker cn_phase -s haplotype_solution.dat -d het_coverage.dat -n august15
+./linker cn_phase -l haplotype_solution.dat -m ./het_coverage.dat -n august15
 ```
-  * -s: input haplotype solution
-  * -d: input het coverage file
+  * -l: input haplotype solution
+  * -m: input het coverage file
   * -n: (optional) id string for output files
   * -b: (optional) binsize (default is 10kb - 10000)
 
 #### Phase Structural Variants (10X)
 
 ```
-./linker sv_phase -i ./input.bam -v het_sites.vcf -e tenx -s ./svfile.dat -n august15
+./linker sv_phase -i ./input.bam -v het_sites.vcf -e tenx -u ./svfile.dat -n august15
 ```
   * -i: /path/to/input/bamfile
   * -v: /path/to/input/vcffile
   * -e: sequencing technology (tenx,pacbio,nanopore,illumina)
-  * -s: /path/to/svfile
+  * -u: /path/to/svfile
   * -n: (optional) id string for output files
 
 #### Phase Germline with HiC clone data
@@ -100,18 +124,6 @@ Output is haplotype solution file: haplotype_solution.dat
   * -v: /path/to/input/vcffile
   * -m: /path/to/coveragefile
   * -c: chromosome (chr1,chr2,...,chrX)
-  * -n: (optional) id string for output files
-
-#### Extract Heterozygous site coveragefile
-
-```
-./linker coverage -i ./input.bam -v het_sites.vcf -e tenx -c chr4 -n august15
-```
-  * -i: /path/to/input/bamfile
-  * -v: /path/to/input/vcffile
-  * -e: sequencing technology (tenx,pacbio,nanopore,illumina)
-  * -c: chromosome (chr1,chr2,...,chrX)
-  * -s: (optional) second bam file /path/to/second/bamfile
   * -n: (optional) id string for output files
 
 #### Create Linked Read Matrix
@@ -143,9 +155,9 @@ Output is haplotype solution file: haplotype_solution.dat
   * -b: (optional) binsize (default is 10kb - 10000)
   * -n: (optional) id string for output files
 
-Input
+Input/Output
 --------
 
+#### Required Files
 
-Output
---------
+#### Generated Files
