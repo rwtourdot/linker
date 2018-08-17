@@ -61,6 +61,12 @@ Commands
 ```
 ./linker phase -h
 ```
+  * -i: /path/to/input/bamfile
+  * -v: /path/to/input/vcffile
+  * -e: sequencing technology (tenx,pacbio,nanopore,illumina)
+  * -c: chromosome (chr1,chr2,...,chrX)
+  * -s: (optional) second bam file /path/to/second/bamfile
+  * -n: (optional) id string for output files
 
 ```
 ## phase with copy number
