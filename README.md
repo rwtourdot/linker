@@ -56,7 +56,7 @@ Commands
 ./linker -h
 ```
 
-#### Phase haplotypes form long and linked reads
+#### Phase haplotypes from long and linked reads
 
 ```
 ./linker phase -h
@@ -68,10 +68,14 @@ Commands
   * -s: (optional) second bam file /path/to/second/bamfile
   * -n: (optional) id string for output files
 
+#### Phase Aneuploid samples based on copy number
+
 ```
 ## phase with copy number
 ./linker cn_phase -h
+```
 
+```
 ## phase structural variants
 ./linker sv_phase -h
 
