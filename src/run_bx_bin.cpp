@@ -9,7 +9,7 @@ namespace opt {
 	static int binsize = 10000;
 };
 
-static const char* shortopts = "ho:i:v:c:e:s:n:";
+static const char* shortopts = "ho:i:c:e:s:n:";
 static const struct option longopts[] = {
         { "bam-file",    no_argument, NULL, 'i' },
         { "technology",  no_argument, NULL, 'e' },

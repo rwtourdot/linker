@@ -8,21 +8,21 @@ namespace opt {
 	static int binsize = 10000;  // 10kb bins have 8-10 het sites on average
 };
 
-static const char* shortopts = "ho:s:d:n:b:";
+static const char* shortopts = "ho:l:m:n:b:";
 static const struct option longopts[] = {
-        { "hap-file",    no_argument, NULL, 's' },
-        { "cov-file",    no_argument, NULL, 'd' },
+        { "hap-file",    no_argument, NULL, 'l' },
+        { "cov-file",    no_argument, NULL, 'm' },
         { "id_string",   no_argument, NULL, 'n' },
         { "binsize",     no_argument, NULL, 'b' }
 };
 
 ///////////////////////////////////////////////
 static const char *CN_PHASE_USAGE_MESSAGE =
-"Usage: linker cn_phase [OPTION] -s /path/to/hap_solution.dat -d /path/to/het_coverage.dat \n\n"
+"Usage: linker cn_phase [OPTION] -l /path/to/hap_solution.dat -m /path/to/het_coverage.dat \n\n"
 "\n"
 "  Options\n"
-"  -s,      input haplotype solution path \n"
-"  -d,      input het coverage path  \n"
+"  -l,      input haplotype solution path \n"
+"  -m,      input het coverage path  \n"
 "  -n,      id string for output files \n"
 "  -b,      binsize - raw base number (default 10000 - 10kb) \n"
 "\n";
@@ -34,8 +34,8 @@ static void parse_cn_phaser_options( int argc, char** argv ) {
                 std::istringstream arg(optarg != NULL ? optarg : "");
                 switch (c) {
                 case 'h': die = true; break;
-                case 's': arg >> opt::input_hap_file; break;
-                case 'd': arg >> opt::input_cov_file; break;
+                case 'l': arg >> opt::input_hap_file; break;
+                case 'm': arg >> opt::input_cov_file; break;
                 case 'n': arg >> opt::id_string; break;
                 case 'b': arg >> opt::binsize; break;
                 }

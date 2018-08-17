@@ -118,7 +118,7 @@ Output is haplotype solution file: haplotype_solution.dat
 #### Phase Germline with HiC clone data
 
 ```
-./linker hic_phase -i ./input.bam -v het_sites.vcf -m ./coverage.dat -c chr4 -n august15
+./linker hic_phase -i ./input.bam -m ./coverage.dat -c chr4 -n august15
 ```
   * -i: /path/to/input/hic/bamfile
   * -v: /path/to/input/vcffile

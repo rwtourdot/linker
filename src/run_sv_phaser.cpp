@@ -9,13 +9,13 @@ namespace opt {
         static std::string id_string = "default";
 };
 
-static const char* shortopts = "ho:i:v:e:s:n:";
+static const char* shortopts = "ho:i:v:e:u:n:";
 static const struct option longopts[] = {
         { "help",        no_argument, NULL, 'h' },
         { "vcf-file",    no_argument, NULL, 'v' },
         { "bam-file",    no_argument, NULL, 'i' },
         { "technology",  no_argument, NULL, 'e' },
-        { "sv_file",     no_argument, NULL, 's' },
+        { "sv_file",     no_argument, NULL, 'u' },
         { "id_string",   no_argument, NULL, 'n' }
 };
 
@@ -27,7 +27,7 @@ static const char *SV_USAGE_MESSAGE =
 "  -i,      input bamfile path \n"
 "  -v,      input vcffile path  \n"
 "  -e,      long read tech (tenx,pacbio) \n"
-"  -s,      sv file path \n"
+"  -u,      sv file path \n"
 "  -n,      id string for output files \n"
 "\n";
 
@@ -41,7 +41,7 @@ static void parse_sv_options( int argc, char** argv ) {
                 case 'i': arg >> opt::input_bam_file; break;
                 case 'v': arg >> opt::input_vcf_file; break;
                 case 'e': arg >> opt::technology; break;
-                case 's': arg >> opt::input_sv_file; break;
+                case 'u': arg >> opt::input_sv_file; break;
                 case 'n': arg >> opt::id_string; break;
                 }
         }
