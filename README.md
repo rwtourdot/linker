@@ -59,7 +59,7 @@ Commands
 #### Phase haplotypes from long and linked reads
 
 ```
-./linker phase -h
+./linker phase -i ./input.bam -v het_sites.vcf -e pacbio -c chr4 -n august15
 ```
   * -i: /path/to/input/bamfile
   * -v: /path/to/input/vcffile
@@ -71,14 +71,25 @@ Commands
 #### Phase Aneuploid samples based on copy number
 
 ```
-## phase with copy number
-./linker cn_phase -h
+./linker cn_phase -s haplotype_solution.dat -d het_coverage.dat -n august15
 ```
+  * -s: /path/to/input/bamfile
+  * -d: /path/to/input/vcffile
+  * -n: (optional) id string for output files
+  * -b: (optional) binsize (default is 10kb - 10000)
+
+#### Phase Aneuploid samples based on copy number
 
 ```
-## phase structural variants
 ./linker sv_phase -h
+```
+  * -i: /path/to/input/bamfile
+  * -v: /path/to/input/vcffile
+  * -e: sequencing technology (tenx,pacbio,nanopore,illumina)
+  * -s: /path/to/svfile
+  * -n: (optional) id string for output files
 
+```
 ## phase Hi-C
 ./linker hic_phase -h
 
