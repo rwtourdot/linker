@@ -51,13 +51,18 @@ Description
 Commands
 --------
 
+#### List Commands
 ```
-## get help
 ./linker -h
+```
 
-## phase long reads
+#### Phase haplotypes form long and linked reads
+
+```
 ./linker phase -h
+```
 
+```
 ## phase with copy number
 ./linker cn_phase -h
 
