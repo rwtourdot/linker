@@ -68,20 +68,22 @@ Commands
   * -s: (optional) second bam file /path/to/second/bamfile
   * -n: (optional) id string for output files
 
+Output is haplotype solution file: haplotype_solution.dat
+
 #### Phase Aneuploid samples based on copy number
 
 ```
 ./linker cn_phase -s haplotype_solution.dat -d het_coverage.dat -n august15
 ```
-  * -s: /path/to/input/bamfile
-  * -d: /path/to/input/vcffile
+  * -s: input haplotype solution
+  * -d: input het coverage file
   * -n: (optional) id string for output files
   * -b: (optional) binsize (default is 10kb - 10000)
 
-#### Phase Aneuploid samples based on copy number
+#### Phase Structural Variants (10X)
 
 ```
-./linker sv_phase -h
+./linker sv_phase -i ./input.bam -v het_sites.vcf -e tenx -s ./svfile.dat -n august15
 ```
   * -i: /path/to/input/bamfile
   * -v: /path/to/input/vcffile
@@ -89,22 +91,57 @@ Commands
   * -s: /path/to/svfile
   * -n: (optional) id string for output files
 
+#### Phase Germline with HiC clone data
+
 ```
-## phase Hi-C
-./linker hic_phase -h
-
-## Extract heterozygous site coverage
-./linker coverage -h
-
-## create linked read heatmap
-./linker matrix -h
-
-## filter het sites based on coverage and coverage fraction
-./linker filter -h
-
-## 10X specific - find droplet based genome covereage
-./linker bx_bin -h
+./linker hic_phase -i ./input.bam -v het_sites.vcf -m ./coverage.dat -c chr4 -n august15
 ```
+  * -i: /path/to/input/hic/bamfile
+  * -v: /path/to/input/vcffile
+  * -m: /path/to/coveragefile
+  * -c: chromosome (chr1,chr2,...,chrX)
+  * -n: (optional) id string for output files
+
+#### Extract Heterozygous site coveragefile
+
+```
+./linker coverage -i ./input.bam -v het_sites.vcf -e tenx -c chr4 -n august15
+```
+  * -i: /path/to/input/bamfile
+  * -v: /path/to/input/vcffile
+  * -e: sequencing technology (tenx,pacbio,nanopore,illumina)
+  * -c: chromosome (chr1,chr2,...,chrX)
+  * -s: (optional) second bam file /path/to/second/bamfile
+  * -n: (optional) id string for output files
+
+#### Create Linked Read Matrix
+
+```
+./linker matrix -i ./input.bam -e tenx -c chr4 -b 10000 -n august15
+```
+  * -i: /path/to/input/bamfile
+  * -e: sequencing technology (tenx,pacbio,nanopore,illumina)
+  * -c: chromosome (chr1,chr2,...,chrX)
+  * -b: (optional) binsize (default is 10kb - 10000)
+  * -n: (optional) id string for output files
+
+#### Filter Het Sites by Coverage and Coverage Fraction
+```
+./linker filter -t tumor_coverage.dat -m normal_coverage.dat -n august15
+```
+  * -t: aneuploid (tumor) coverage file
+  * -m: diploid (normal) coverage file
+  * -n: (optional) id string for output files
+
+#### Bin 10X sample by BX tag
+```
+./linker bx_bin -i ./input.bam -e tenx -c chr4 -b 10000 -n august15
+```
+  * -i: /path/to/input/bamfile
+  * -e: sequencing technology (tenx,pacbio,nanopore,illumina)
+  * -c: chromosome (chr1,chr2,...,chrX)
+  * -b: (optional) binsize (default is 10kb - 10000)
+  * -n: (optional) id string for output files
 
 Input
 --------
