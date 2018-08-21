@@ -24,7 +24,7 @@ static const char *COVERAGE_USAGE_MESSAGE =
 "\n"
 "  Options\n"
 "  -i,      input bamfile path \n"
-"  -e,      long read tech (tenx,pacbio,illumina) \n"
+"  -e,      long read tech ( tenx ) \n"
 "  -c,      chromosome name ( chr4 ) or contig name depending on bam \n"
 "  -n,      id string for output files \n"
 "  -b,      binsize - raw base number (default 10000 - 10kb) \n"

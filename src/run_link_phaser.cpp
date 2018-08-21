@@ -110,10 +110,8 @@ void run_link_phaser( int argc, char** argv ) {
         parse_link_phaser_options(argc, argv);
         std::string output_network_file = "./output/variant_network_" + opt::id_string + "_" + opt::technology + "_" + opt::chr_choice + ".dat";
         std::string hapsolutionFile = "./output/hap_solution_" + opt::id_string  + "_" + opt::technology + "_" + opt::chr_choice + ".dat";
-        std::string hetfilterFile = "./output/filtered_het_sites_" + opt::id_string  + "_" + opt::technology + "_" + opt::chr_choice + ".dat";
         cout << "- output net file: " << output_network_file << endl;
         cout << "- output hap file: " << hapsolutionFile << endl;
-        cout << "- output het file: " << hetfilterFile << endl;
         cout << endl;
         std::map<std::string,int> chr_str_map;
         coord_dictionary pdict;

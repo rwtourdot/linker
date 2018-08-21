@@ -26,7 +26,7 @@ static const char *SV_USAGE_MESSAGE =
 "  Options\n"
 "  -i,      input bamfile path \n"
 "  -v,      input vcffile path  \n"
-"  -e,      long read tech (tenx,pacbio) \n"
+"  -e,      long read tech (tenx,pacbio,nanopore) \n"
 "  -u,      sv file path \n"
 "  -n,      id string for output files \n"
 "\n";

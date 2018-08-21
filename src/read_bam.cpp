@@ -151,55 +151,58 @@ void connect_up_variants_bam_pileup( vcf_vector vvec, std::string inputFilename,
         for (int i=0; i < vvec.size(); i++) {
                 if ((vvec[i].ref_base.length() == 1 ) && (vvec[i].var_base.length() == 1 )) {
 		if (vvec[i].bounded) {
-                        //cout << vcf_vector[i].pos << "    " << vcf_vector[i].ref_base << "   " << vcf_vector[i].var_base << endl;
-                        std::string variant_id = std::to_string(vvec[i].pos) + "_" + vvec[i].ref_base + "_" + vvec[i].var_base;
-                        std::string reference_id = std::to_string(vvec[i].pos) + "_" + vvec[i].ref_base + "_" + vvec[i].ref_base;
-                        bool present1 = get_tag_value(variant_id,variant_cnx);
-                        bool present2 = get_tag_value(reference_id,variant_cnx);
-                        if(!present1) {
-                                variant_node v_node;  
-				variant_cnx[variant_id] = v_node;
-                                variant_cnx[variant_id].set_values(vvec[i].pos,true,vvec[i].var_base,vvec[i].ref_base);
-                        }
-                        if(!present2) {
-                                variant_node r_node;  
-				variant_cnx[reference_id] = r_node;
-                                variant_cnx[reference_id].set_values(vvec[i].pos,false,vvec[i].var_base,vvec[i].ref_base);
-                        }
-                        BamTools::BamRegion region(chromosome,vvec[i].pos-2,chromosome,vvec[i].pos+2);
-                        reader.SetRegion(region);
-                        while(reader.GetNextAlignmentCore(al)) {
-                                if ((al.Position < vvec[i].pos) && (al.GetEndPosition() > vvec[i].pos)) {
-                                if (alignment_boolean_check(al)) {  // added in 0.5
-                                        al.BuildCharData();
-                                        std::string qual = al.Qualities;
-                                        std::pair<char,int> base_qual = get_base_readpos(al.CigarData,al.AlignedBases,vvec[i].pos,al.Position,qual);
-                                        base_at_pos = base_qual.first;
-                                        int bqual = base_qual.second;
-                                        if (bqual >= minimum_baseq) {
-                                        std::string readhash_long = technology_hash(technology,al);
-                                        std::stringstream ss;   std::string base_to_compare;
-                                        ss << base_at_pos;      ss >> base_to_compare;  // convert character to string
-                                        //cout << al.RefID << "  " << al.MapQuality << "  " << start_pos << "  " << end_pos << "   " << base_at_pos << endl;
-					//cout << technology << " " << readhash_long << endl;
-					if (readhash_long.size() > 1 ) {
-                                        	variant_cnx[variant_id].add_base_to_dict(base_at_pos,readhash_long);
-                                        	variant_cnx[reference_id].add_base_to_dict(base_at_pos,readhash_long);
-					} else {
-                                                variant_cnx[variant_id].add_base_to_dict(base_at_pos,"nohash");
-                                                variant_cnx[reference_id].add_base_to_dict(base_at_pos,"nohash");
-					}
-                                        if (readhash_long.size() > 1 ) {           // tenx if loop - sometimes reads dont have bx tags  readname long is empty
-                                        if ((base_to_compare == vvec[i].var_base) || (base_to_compare == vvec[i].ref_base)) {
-                                                std::string het_hash = std::to_string(vvec[i].pos) + "_" + vvec[i].ref_base + "_" + base_to_compare;
-                                                if (rgraph.find(readhash_long) != rgraph.end()) { rgraph[readhash_long].add_connection(het_hash); }
-                                                else { rgraph[readhash_long].set_name(readhash_long); rgraph[readhash_long].add_connection(het_hash); }
-                                                if (base_to_compare == vvec[i].var_base) {      variant_cnx[variant_id].add_connected_read(readhash_long); }
-                                                else if (base_to_compare == vvec[i].ref_base) { variant_cnx[reference_id].add_connected_read(readhash_long); }
-                                        } } }
-                                } }
-                        }
-			used_variants += 1;
+                //cout << vcf_vector[i].pos << "    " << vcf_vector[i].ref_base << "   " << vcf_vector[i].var_base << endl;
+		int loop_pos = vvec[i].pos;
+                std::string rbase = vvec[i].ref_base;
+                std::string vbase = vvec[i].var_base;
+                std::string variant_id = std::to_string(loop_pos) + "_" + rbase + "_" + vbase;
+                std::string reference_id = std::to_string(loop_pos) + "_" + rbase + "_" + rbase;
+                bool present1 = get_tag_value(variant_id,variant_cnx);
+                bool present2 = get_tag_value(reference_id,variant_cnx);
+                if(!present1) {
+                        variant_node v_node;  
+			variant_cnx[variant_id] = v_node;
+                        variant_cnx[variant_id].set_values(loop_pos,true,vbase,rbase);
+                }
+                if(!present2) {
+                        variant_node r_node;  
+			variant_cnx[reference_id] = r_node;
+                        variant_cnx[reference_id].set_values(loop_pos,false,vbase,rbase);
+                }
+                BamTools::BamRegion region(chromosome,loop_pos-2,chromosome,loop_pos+2);
+                reader.SetRegion(region);
+                while(reader.GetNextAlignmentCore(al)) {
+                        if ((al.Position < loop_pos) && (al.GetEndPosition() > loop_pos)) {
+                        if (alignment_boolean_check(al)) {  // added in 0.5
+                                al.BuildCharData();
+                                std::string qual = al.Qualities;
+                                std::pair<char,int> base_qual = get_base_readpos(al.CigarData,al.AlignedBases,loop_pos,al.Position,qual);
+                                base_at_pos = base_qual.first;
+                                int bqual = base_qual.second;
+                                if (bqual >= minimum_baseq) {
+                                std::string readhash_long = technology_hash(technology,al);
+                                std::stringstream ss;   std::string base_to_compare;
+                                ss << base_at_pos;      ss >> base_to_compare;  // convert character to string
+                                //cout << al.RefID << "  " << al.MapQuality << "  " << start_pos << "  " << end_pos << "   " << base_at_pos << endl;
+				//cout << technology << " " << readhash_long << endl;
+				if (readhash_long.size() > 1 ) {
+                                        variant_cnx[variant_id].add_base_to_dict(base_at_pos,readhash_long);
+                                        variant_cnx[reference_id].add_base_to_dict(base_at_pos,readhash_long);
+				} else {
+                                        variant_cnx[variant_id].add_base_to_dict(base_at_pos,"nohash");
+                                        variant_cnx[reference_id].add_base_to_dict(base_at_pos,"nohash");
+				}
+                                if (readhash_long.size() > 1 ) {           // tenx if loop - sometimes reads dont have bx tags  readname long is empty
+                                if ((base_to_compare == vbase) || (base_to_compare == rbase)) {
+                                        std::string het_hash = std::to_string(loop_pos) + "_" + rbase + "_" + base_to_compare;
+                                        if (rgraph.find(readhash_long) != rgraph.end()) { rgraph[readhash_long].add_connection(het_hash); }
+                                        else { rgraph[readhash_long].set_name(readhash_long); rgraph[readhash_long].add_connection(het_hash); }
+                                        if (base_to_compare == vbase) {      variant_cnx[variant_id].add_connected_read(readhash_long); }
+                                        else if (base_to_compare == rbase) { variant_cnx[reference_id].add_connected_read(readhash_long); }
+                                } } }
+                        } }
+                }
+		used_variants += 1;
                 } }
                 total_variants += 1;
                 //cout << iterate << "    " << vcf_vector.size() << endl;
@@ -227,46 +230,45 @@ void connect_up_variants_hic_bam_pileup( coord_dictionary& pdict, std::string in
                 int loop_pos = pdict.sorted_paired_positions[i];
                 std::string het_string = pdict.paired_dict[loop_pos][0];
                 std::string het_string2 = pdict.paired_dict[loop_pos][1];
+		std::string rbase = variant_cnx[het_string].ref_base;
+		std::string vbase = variant_cnx[het_string].var_base;
 		std::string variant_id,reference_id;
                 if ( variant_cnx[het_string].var ) { variant_id = het_string;  reference_id = het_string2; } 
 		else {              		     variant_id = het_string2; reference_id = het_string;  }
 		//cout << loop_pos << " " << reference_id << " " << variant_id << endl;
-		std::string rbase = variant_cnx[het_string].ref_base;
-		std::string vbase = variant_cnx[het_string].var_base;
                 BamTools::BamRegion region(chromosome,loop_pos-2,chromosome,loop_pos+2);
                 reader.SetRegion(region);
                 while(reader.GetNextAlignmentCore(al)) {
                 	if ((al.Position < loop_pos) && (al.GetEndPosition() > loop_pos)) {
-                                if (alignment_boolean_check_hic(al)) {  // added in 0.5   // added a hic specific check 
-                                        al.BuildCharData();
-                                        std::string qual = al.Qualities;
-                                        std::pair<char,int> base_qual = get_base_readpos(al.CigarData,al.AlignedBases,loop_pos,al.Position,qual);
-                                        base_at_pos = base_qual.first;
-                                        int bqual = base_qual.second;
-                                        if (bqual >= minimum_baseq_hic) {
-                                        std::string readhash_long = technology_hash(technology,al);
-                                        std::stringstream ss;   std::string base_to_compare;
-                                        ss << base_at_pos;      ss >> base_to_compare;  // convert character to string
-                                        //cout << al.RefID << "  " << al.MapQuality << "  " << start_pos << "  " << end_pos << "   " << base_at_pos << endl;
-                                        //cout << technology << " " << readhash_long << endl;
-                                        //if (readhash_long == "H7CMTADXX:1:1108:9261:79691") { cout << readhash_long << endl; }
-                                        if (readhash_long.size() > 1 ) {
-                                                variant_cnx[variant_id].add_base_to_dict(base_at_pos,readhash_long);
-                                                variant_cnx[reference_id].add_base_to_dict(base_at_pos,readhash_long);
-                                        } else {
-                                                variant_cnx[variant_id].add_base_to_dict(base_at_pos,"nohash");
-                                                variant_cnx[reference_id].add_base_to_dict(base_at_pos,"nohash");
-                                        }
-                                        if (readhash_long.size() > 1 ) {           // tenx if loop - sometimes reads dont have bx tags  readname long is empty
-                                        if ((base_to_compare == vbase) || (base_to_compare == rbase)) {
-                                                std::string het_hash = std::to_string(loop_pos) + "_" + rbase + "_" + base_to_compare;
-                                                if (rgraph.find(readhash_long) != rgraph.end()) { rgraph[readhash_long].add_connection(het_hash); }
-                                                else { rgraph[readhash_long].set_name(readhash_long); rgraph[readhash_long].add_connection(het_hash); }
-                                                if (base_to_compare == vbase) {      variant_cnx[variant_id].add_connected_read(readhash_long); }
-                                                else if (base_to_compare == rbase) { variant_cnx[reference_id].add_connected_read(readhash_long); }
-                                        } } }
-                                } 
-			}
+                        if (alignment_boolean_check_hic(al)) {  // added in 0.5   // added a hic specific check 
+                                al.BuildCharData();
+                                std::string qual = al.Qualities;
+                                std::pair<char,int> base_qual = get_base_readpos(al.CigarData,al.AlignedBases,loop_pos,al.Position,qual);
+                                base_at_pos = base_qual.first;
+                                int bqual = base_qual.second;
+                                if (bqual >= minimum_baseq_hic) {
+                                std::string readhash_long = technology_hash(technology,al);
+                                std::stringstream ss;   std::string base_to_compare;
+                                ss << base_at_pos;      ss >> base_to_compare;  // convert character to string
+                                //cout << al.RefID << "  " << al.MapQuality << "  " << start_pos << "  " << end_pos << "   " << base_at_pos << endl;
+                                //cout << technology << " " << readhash_long << endl;
+                                //if (readhash_long == "H7CMTADXX:1:1108:9261:79691") { cout << readhash_long << endl; }
+                                if (readhash_long.size() > 1 ) {
+                                        variant_cnx[variant_id].add_base_to_dict(base_at_pos,readhash_long);
+                                        variant_cnx[reference_id].add_base_to_dict(base_at_pos,readhash_long);
+                                } else {
+                                        variant_cnx[variant_id].add_base_to_dict(base_at_pos,"nohash");
+                                        variant_cnx[reference_id].add_base_to_dict(base_at_pos,"nohash");
+                                }
+                                if (readhash_long.size() > 1 ) {           // tenx if loop - sometimes reads dont have bx tags  readname long is empty
+                                if ((base_to_compare == vbase) || (base_to_compare == rbase)) {
+                                        std::string het_hash = std::to_string(loop_pos) + "_" + rbase + "_" + base_to_compare;
+                                        if (rgraph.find(readhash_long) != rgraph.end()) { rgraph[readhash_long].add_connection(het_hash); }
+                                        else { rgraph[readhash_long].set_name(readhash_long); rgraph[readhash_long].add_connection(het_hash); }
+                                        if (base_to_compare == vbase) {      variant_cnx[variant_id].add_connected_read(readhash_long); }
+                                        else if (base_to_compare == rbase) { variant_cnx[reference_id].add_connected_read(readhash_long); }
+                                } } }
+                        } }
                 }
                 used_variants += 1;
         }

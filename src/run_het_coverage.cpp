@@ -80,11 +80,11 @@ void run_het_coverage(int argc, char** argv) {
         int chromosome = chr_str_map[opt::chr_choice];
         //#################### start of code ##########################
         vvec = load_vcf_file(opt::input_vcf_file,chromosome);
-        if (opt::technology == "pacbio" || opt::technology == "tenx" || opt::technology == "illumina") {
+        if (opt::technology == "pacbio" || opt::technology == "tenx" || opt::technology == "illumina" || opt::technology == "nanopore" ) {
                 connect_up_variants_bam_pileup(vvec,opt::input_bam_file,chromosome,vgraph,rgraph,opt::technology);
                 if(opt::multiple_bams) { connect_up_variants_bam_pileup(vvec,opt::second_input_bam_file,chromosome,vgraph,rgraph,opt::technology); }
         }
-        else { cout << "error: not a valid technology choice [pacbio,tenx,illumina] " << endl; return; }
+        else { cout << "error: not a valid technology choice [pacbio,tenx,illumina,nanopore] " << endl; return; }
 	if (opt::technology == "tenx") { 
 		calc_coverage_unique_hash(vgraph);
 		write_het_bx_coverage(vgraph,coverageFile,opt::chr_choice); 

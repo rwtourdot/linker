@@ -60,12 +60,9 @@ void run_cn_phaser(int argc, char** argv) {
         std::string outputFile = "./output/cn_phased_" + opt::id_string + ".dat";
         variant_graph vgraph;
         coord_dictionary pdict;
-	//if ( opt::input_cov_file.substr(opt::input_cov_file.length() - 4) == ".vcf" ) {
-	//   vcf_vector vvec; 
-	//   vvec = load_vcf_file_coverage(opt::input_cov_file,chromosome);
-	//}
 	read_het_coverage( opt::input_cov_file, vgraph );
 	initialize_pdict( vgraph, pdict );
+	/////////////////////////////////////////
 	pdict.hap_zero_initialization();
 	read_hap_solution( opt::input_hap_file, pdict );
 	/////////////////////////////////////////
@@ -74,11 +71,17 @@ void run_cn_phaser(int argc, char** argv) {
 	initialize_copy_num_map( chromosome_map, pdict, vgraph, opt::binsize, bin_array );
 	cout << " cn phasing section " << endl;
 	cn_phasing( chromosome_map, bin_array, good_bins, rec_bins, merged_bins );
-	//write_cn_phased( chromosome_map, outputFile, good_bins, merged_bins );
 	write_cn_phased( chromosome_map, outputFile, rec_bins, merged_bins );
         cout << " cn phasing coming soon " << endl;
         return;
 };
+
+	//write_cn_phased( chromosome_map, outputFile, good_bins, merged_bins );
+
+        //if ( opt::input_cov_file.substr(opt::input_cov_file.length() - 4) == ".vcf" ) {
+        //   vcf_vector vvec;
+        //   vvec = load_vcf_file_coverage(opt::input_cov_file,chromosome);
+        //}
 
 
         //int chromosome = 0;  //2
