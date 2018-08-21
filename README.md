@@ -70,11 +70,12 @@ Commands
 
 #### Phase germline haplotypes from long and linked reads
 
+This commmand takes in a vcf file and a long or linked read bam to compute phased haplotype blocks
+
 ```
 ./linker phase -i ./input.bam -v het_sites.vcf -e pacbio -c chr4 -n august15
 ```
-
-Output is haplotype solution file: haplotype_solution.dat
+  * Output is haplotype solution file: haplotype_solution.dat
 
 #### Extract Heterozygous site Coverage
 
