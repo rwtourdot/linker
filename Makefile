@@ -19,8 +19,8 @@ LFLAGS=-L$(LDIR) -L$(LDIR2) -Wl,-rpath,$(IDIR2),-rpath,$(IDIR3) #-L$(LDIR3)
 LBAMTOOLS=-lbamtools
 LHTS=-lhts
 LZLIB=-lz
-#LCURL=-lcurl
-LIBRARIES=$(LHTS) $(LZLIB) $(LBAMTOOLS) #$(LHTS) -fPIC
+LCURL=-lcurl
+LIBRARIES=$(LHTS) $(LZLIB) $(LBAMTOOLS) $(LCURL) 
 #CCPLUS=$(CC) $(LFLAGS) $(CFLAGS)
 
 SRCDIR:=src
