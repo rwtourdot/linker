@@ -98,7 +98,7 @@ Haplotypes can be phased further based on tumor copy number.  Copy number phasin
 ```
 ./linker cn_phase -l haplotype_solution.dat -m ./het_coverage.dat -n august15
 ```
-  * Output is output is copy number phased haplotype file: cn_haplotype.dat
+  * Output is a copy number phased haplotype file: cn_haplotype.dat
 
 #### Phase Structural Variants (10X/Nanopore)
 
