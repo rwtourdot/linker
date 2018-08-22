@@ -137,7 +137,7 @@ In order refine variant calls it can be usefull to use allele fraction from a no
 ```
   * Output is a filtered coverage file: filtered_coverage.dat
 
-#### Bin 10X sample by BX tag
+#### Bin 10X Sample by BX tag
 
 10X sequencing coverage data can be refined by looking at unique bx tag density.  This command takes a 10X bam file and bins the genome by coverage of unique bx tag.
 

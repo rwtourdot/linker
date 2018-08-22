@@ -223,8 +223,3 @@ load_phasedsv_positions <- function(phased_file,chrom_list,band_width) {
 
 
 
-
-
-
-  #file_string <- file_string ,
-  #phased_data <- dplyr::rename(phased_data,"chr1"="X1","pos1"="X2","chr2"="X3","pos2"="X4","hap1"="X5","hap2"="X6","sv_type"="X7")
