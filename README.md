@@ -70,24 +70,35 @@ Commands
 
 #### Phase germline haplotypes from long and linked reads
 
-This commmand takes in a vcf file and a long or linked read bam to compute phased haplotype blocks
+This commmand takes in a vcf file and a long or linked read bam to compute phased haplotype blocks.  The vcf file should contain all germline heterozygous sites and most likely originates from a paired normal sample.  The bam file or files should be obtained with a long read technology and could originate for tumor,normal, or tumor+normal.
 
 ```
 ./linker phase -i ./input.bam -v het_sites.vcf -e pacbio -c chr4 -n august15
+./linker phase -i ./input.bam -s ./second_input.bam -v het_sites.vcf -e pacbio -c chr4 -n august15
 ```
   * Output is haplotype solution file: haplotype_solution.dat
 
+The output of this command is a file which contains the minimum energy solution to the germline haplotype.  More information on this file is described in the I/O section below.
+
 #### Extract Heterozygous site Coverage
 
+This command takes a vcf and bam file and extracts the read coverage of each allele. In order to count a base at a heterozygous site both the base quality and read map quality must pass a cutoff.
+
 ```
-./linker coverage -i ./input.bam -v het_sites.vcf -e tenx -c chr4 -n august15
+./linker coverage -i ./input.bam -v het_sites.vcf -e illumina -c chr4 -n august15
 ```
+  * Output is heterozygous site coverage file: coverage.dat
+
+The output of this command is a file which contains the read depth coverage of each heterozygous site for both reference and variant bases.  More information on this file is described in the I/O section below.
 
 #### Phase Aneuploid samples based on copy number
+
+Haplotypes can be phased further based on tumor copy number.  Copy number phasing works better in samples where aneuploidy and loss of heterozygocity is prevalent.
 
 ```
 ./linker cn_phase -l haplotype_solution.dat -m ./het_coverage.dat -n august15
 ```
+  * Output is output is copy number phased haplotype file: cn_haplotype.dat
 
 #### Phase Structural Variants (10X)
 
