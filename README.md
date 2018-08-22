@@ -100,30 +100,47 @@ Haplotypes can be phased further based on tumor copy number.  Copy number phasin
 ```
   * Output is output is copy number phased haplotype file: cn_haplotype.dat
 
-#### Phase Structural Variants (10X)
+#### Phase Structural Variants (10X/Nanopore)
+
+Once haplotypes are found, and associated Structural Variants can be phased with a 10X or Nanopore tumor sample.  Structual Variant's can be called with a SV caller and converted to the svfile input format described in the I/O section below.
 
 ```
 ./linker sv_phase -i ./input.bam -v het_sites.vcf -e tenx -u ./svfile.dat -n august15
 ```
+  * Output is a phased sv file: sv_phased.dat
 
 #### Phase Germline with HiC clone data
+
+HiC data can be phased in a similar fashon to SV's.  This command takes an input HiC bam file and a vcf file or coverage file and phases any chromosome contacts which overlap a het site.  HiC data is sparse and a connection of two het sites does not guarantee they are on the same allele.  HiC phasing data is therefore probibalistic and requires another long or linked read technology to phase accurately.
 
 ```
 ./linker hic_phase -i ./input.bam -m ./coverage.dat -c chr4 -n august15
 ```
+  * Output is a phased hic het link file: hic_links.dat
 
 #### Create Linked Read Matrix
+
+A local alignment map can be extracted from any long or linked read technology. This map does not contain any allele information but can more clearly show translocations and inversions.
 
 ```
 ./linker matrix -i ./input.bam -e tenx -c chr4 -b 10000 -n august15
 ```
+  * Output is a matrix file: matrix.dat
 
 #### Filter Het Sites by Coverage and Coverage Fraction
+
+In order refine variant calls it can be usefull to use allele fraction from a normal sample to extract a more confident subset of variants.  This command takes in a coverage file and filters het sites based on allelic fraction.  Specifically this command checks if the fraction of variant bases is between 10 - 90 percent.
+
 ```
+./linker filter -m normal_coverage.dat -n august15
 ./linker filter -t tumor_coverage.dat -m normal_coverage.dat -n august15
 ```
+  * Output is a filtered coverage file: filtered_coverage.dat
 
 #### Bin 10X sample by BX tag
+
+10X sequencing coverage data can be refined by looking at unique bx tag density.  This command takes a 10X bam file and bins the genome by coverage of unique bx tag.
+
 ```
 ./linker bx_bin -i ./input.bam -e tenx -c chr4 -b 10000 -n august15
 ```
