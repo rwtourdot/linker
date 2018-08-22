@@ -68,7 +68,7 @@ Commands
   * -n: (optional) id string for output files
   * -b: (optional) binsize (default is 10kb - 10000)
 
-#### Phase germline haplotypes from long and linked reads
+#### Phase Germline Haplotypes from Long and Linked Reads
 
 This commmand takes in a vcf file and a long or linked read bam to compute phased haplotype blocks.  The vcf file should contain all germline heterozygous sites and most likely originates from a paired normal sample.  The bam file or files should be obtained with a long read technology and could originate for tumor,normal, or tumor+normal.
 
@@ -80,7 +80,7 @@ This commmand takes in a vcf file and a long or linked read bam to compute phase
 
 The output of this command is a file which contains the minimum energy solution to the germline haplotype.  More information on this file is described in the I/O section below.
 
-#### Extract Heterozygous site Coverage
+#### Extract Heterozygous Site Coverage
 
 This command takes a vcf and bam file and extracts the read coverage of each allele. In order to count a base at a heterozygous site both the base quality and read map quality must pass a cutoff.
 
@@ -91,7 +91,7 @@ This command takes a vcf and bam file and extracts the read coverage of each all
 
 The output of this command is a file which contains the read depth coverage of each heterozygous site for both reference and variant bases.  More information on this file is described in the I/O section below.
 
-#### Phase Aneuploid samples based on copy number
+#### Phase Aneuploid Samples based on Copy Number
 
 Haplotypes can be phased further based on tumor copy number.  Copy number phasing works better in samples where aneuploidy and loss of heterozygocity is prevalent.
 
@@ -102,14 +102,14 @@ Haplotypes can be phased further based on tumor copy number.  Copy number phasin
 
 #### Phase Structural Variants (10X/Nanopore)
 
-Once haplotypes are found, and associated Structural Variants can be phased with a 10X or Nanopore tumor sample.  Structual Variant's can be called with a SV caller and converted to the svfile input format described in the I/O section below.
+Once haplotypes are found, associated Structural Variants can be phased with a 10X or Nanopore tumor sample.  Structual Variant's can be called with a SV caller and converted to the svfile input format described in the I/O section below.
 
 ```
 ./linker sv_phase -i ./input.bam -v het_sites.vcf -e tenx -u ./svfile.dat -n august15
 ```
   * Output is a phased sv file: sv_phased.dat
 
-#### Phase Germline with HiC clone data
+#### Phase Germline with HiC (clonal sample)
 
 HiC data can be phased in a similar fashon to SV's.  This command takes an input HiC bam file and a vcf file or coverage file and phases any chromosome contacts which overlap a het site.  HiC data is sparse and a connection of two het sites does not guarantee they are on the same allele.  HiC phasing data is therefore probibalistic and requires another long or linked read technology to phase accurately.
 
@@ -129,7 +129,7 @@ A local alignment map can be extracted from any long or linked read technology. 
 
 #### Filter Het Sites by Coverage and Coverage Fraction
 
-In order refine variant calls it can be usefull to use allele fraction from a normal sample to extract a more confident subset of variants.  This command takes in a coverage file and filters het sites based on allelic fraction.  Specifically this command checks if the fraction of variant bases is between 10 - 90 percent.
+In order refine variant calls it can be usefull to use allele fraction from a normal sample to extract a more confident subset of variants.  This command takes in a coverage file and filters het sites based on allelic fraction.  Specifically, this command checks if the fraction of variant bases is between 10 - 90 percent and sends it to an output file.  This command can also filter tumor coverage data based on the allele fraction in a corresponding normal sample.
 
 ```
 ./linker filter -m normal_coverage.dat -n august15
