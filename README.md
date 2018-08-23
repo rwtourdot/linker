@@ -44,8 +44,7 @@ cd ../..
 
 Description
 -----------
-
-<img src="https://github.com/rwtourdot/linker/blob/master/linker_flowchart.png" width=800/>
+Linker is a suite of tools for useful for interpreting long or linked read sequencing of cancer genomes.  The key information long read sequencing provides is the germline haplotype of the cell line.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygocity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells evolution.
 
 Commands
 --------
