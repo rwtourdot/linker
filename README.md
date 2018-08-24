@@ -16,7 +16,7 @@ code requires bamtools, htslib, c++11, and zlib
   * htslib: https://github.com/samtools/htslib
   * bamtools: https://github.com/pezmaster31/bamtools
 
-From linker directory:
+From the linker directory:
 
 Installing htslib locally
 ```
@@ -44,7 +44,7 @@ cd ../..
 
 Description
 -----------
-Linker is a suite of tools for useful for interpreting long or linked read sequencing of cancer genomes.  The key information long read sequencing provides is the germline haplotype of the cell line.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygocity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells evolution.
+Linker is a suite of tools useful for interpreting long or linked read sequencing of cancer genomes.  The key information long read sequencing provides is the germline haplotype of the cell line.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygocity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells evolution.
 
 Linker currently supports 10X, Pacbio, Oxford Nanopore, and HiC sequencing technologies.  Some technologies work better in the specific tools listed below, and HiC requires a distinct phasing methodology.  A diagram of the analysis workflow is shown below.
 
@@ -164,7 +164,7 @@ There are several Structural Variant callers that work with paired end sequencin
 
 ```
 RAindex	chr1	pos1	str1	chr2	pos2	str2	TotalCount
-20	chr1	1651206	-1	chr1	1717357	1	3
+20  chr1	1651206	-1	chr1	1717357	1	3
 ```
 
 #### Generated Files
