@@ -153,4 +153,6 @@ Input/Output
 
 #### Required Files
 
+### .vcf file
+
 #### Generated Files
