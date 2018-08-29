@@ -1,6 +1,6 @@
-## Linker - Analysis tools for Long Read and Linked Read Sequencing
+## Linker - Tools for Analyzing Long and Linked read Sequencing
 
-Table of contents
+Table of Contents
 =================
 
   * [Installation](#gh-md-toc)
@@ -11,7 +11,7 @@ Table of contents
 Installation
 ------------
 
-code requires bamtools, htslib, c++11, and zlib
+This code requires bamtools, htslib, c++11, and zlib libraries.
 
   * htslib: https://github.com/samtools/htslib
   * bamtools: https://github.com/pezmaster31/bamtools
@@ -44,7 +44,7 @@ cd ../..
 
 Description
 -----------
-Linker is a suite of tools useful for interpreting long or linked read sequencing of cancer genomes.  The key information long read sequencing provides is the germline haplotype of the cell line.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygocity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells evolution.
+Linker is a suite of tools useful for interpreting long or linked read sequencing of cancer genomes.  The key information long read sequencing provides is the germline haplotype of the cell line.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygosity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells genomic evolution.
 
 Linker currently supports 10X, Pacbio, Oxford Nanopore, and HiC sequencing technologies.  Some technologies work better in the specific tools listed below, and HiC requires a distinct phasing methodology.  A diagram of the analysis workflow is shown below.
 
@@ -73,7 +73,7 @@ Commands
 
 #### Phase Germline Haplotypes from Long and Linked Reads
 
-This commmand takes in a vcf file and a long or linked read bam to compute phased haplotype blocks.  The vcf file should contain all germline heterozygous sites and most likely originates from a paired normal sample.  The bam file or files should be obtained with a long read technology and could originate for tumor,normal, or tumor+normal.
+This commmand takes in a vcf file and a long or linked read bam file to compute phased haplotype blocks.  The vcf file should contain all germline heterozygous sites and most likely originates from a paired normal sample.  The bam file or files should be obtained with a long read technology and could originate for tumor, normal, or tumor+normal.
 
 ```
 ./linker phase -i ./input.bam -v het_sites.vcf -e pacbio -c chr4 -n august15
@@ -96,16 +96,16 @@ The output of this command is a file which contains the read depth coverage of e
 
 #### Phase Aneuploid Samples based on Copy Number
 
-Haplotypes can be phased further based on tumor copy number.  Copy number phasing works better in samples where aneuploidy and loss of heterozygocity is prevalent.
+Haplotypes can be phased further based on tumor copy number.  Copy number phasing works better in tumor samples where aneuploidy and loss of heterozygocity is prevalent.
 
 ```
-./linker cn_phase -l haplotype_solution.dat -m ./het_coverage.dat -n august15
+./linker cn_phase -l haplotype_solution.dat -m ./het_coverage_aneuploid.dat -n august15
 ```
   * Output is a copy number phased haplotype file: cn_haplotype.dat
 
 #### Phase Structural Variants (10X/Nanopore)
 
-Once haplotypes are found, associated Structural Variants can be phased with a 10X or Nanopore tumor sample.  Structual Variant's can be called with a SV caller and converted to the svfile input format described in the I/O section below.
+Once haplotypes are found, associated Structural Variants can be phased with a 10X or Nanopore tumor sample.  Structual Variant's can be called with a SV caller and converted to the svfile input file format described in the I/O section below.
 
 ```
 ./linker sv_phase -i ./input.bam -v het_sites.vcf -e tenx -u ./svfile.dat -n august15
@@ -123,7 +123,7 @@ HiC data can be phased in a similar fashon to SV's.  This command takes an input
 
 #### Create Linked Read Matrix
 
-A local alignment map can be extracted from any long or linked read technology. This map does not contain any allele information but can more clearly show translocations and inversions.
+A local alignment map can be extracted from any long or linked read technology. This map does not contain any allelic information but can more clearly show translocations and inversions.
 
 ```
 ./linker matrix -i ./input.bam -e tenx -c chr4 -b 10000 -n august15
@@ -132,7 +132,7 @@ A local alignment map can be extracted from any long or linked read technology. 
 
 #### Filter Het Sites by Coverage and Coverage Fraction
 
-In order refine variant calls it can be usefull to use allele fraction from a normal sample to extract a more confident subset of variants.  This command takes in a coverage file and filters het sites based on allelic fraction.  Specifically, this command checks if the fraction of variant bases is between 10 - 90 percent and sends it to an output file.  This command can also filter tumor coverage data based on the allele fraction in a corresponding normal sample.
+In order refine variant calls it can be useful to use allele fraction from a normal sample to extract a more confident subset of variants.  This command takes in a coverage file and filters het sites based on allelic fraction.  More specifically, this command checks if the fraction of variant bases is between 10 - 90 percent and passes it to a filtered output file.  This command can also filter tumor coverage data based on the allele fraction in a corresponding normal sample.
 
 ```
 ./linker filter -m normal_coverage.dat -n august15
