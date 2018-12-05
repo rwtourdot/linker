@@ -168,3 +168,10 @@ RAindex	chr1	pos1	str1	chr2	pos2	str2	TotalCount
 ```
 
 #### Generated Files
+
+##### het coverage file
+The heterozygous site coverage file contains information on the number of each base at every heterozygous site called with the GATK.
+```
+variant_id  position  variant:reference Indel Deletion  Gbase Cbase Abase Tbase Total
+190204289_T_C	190204289	T:C	I|0	D|0	G|0	C|44	A|0	T|30	74
+```

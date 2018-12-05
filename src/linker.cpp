@@ -4,7 +4,7 @@
 static const char *LINKER_USAGE_MESSAGE =
 "############### running linker ############### \n"
 "Program: Linker \n"
-"Version: 2.1 \n"
+"Version: 2.3 \n"
 "Usage: linker <command> [options]\n\n"
 "Commands:\n"
 "	phase		phase germline haplotype from linked read sample \n"

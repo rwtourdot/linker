@@ -26,6 +26,7 @@ static const struct option longopts[] = {
         { "id_string",   no_argument, NULL, 'n' }
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 static const char *PHASER_USAGE_MESSAGE =
 "Usage: linker phase [OPTION] -v /path/to/vcffile.vcf -i /path/to/bamfile.bam \n\n"
 "\n"
@@ -124,7 +125,9 @@ void run_link_phaser( int argc, char** argv ) {
 	//if (opt::filter) { };
         //vcf_vector = load_and_filter_vcf_file(opt::input_vcf_file,chromosome,opt::chr_choice,hetfilterFile);
         vvec = load_vcf_file(opt::input_vcf_file,chromosome);
-	if (opt::region_defined) { subset_het_sites(vvec,opt::start_bound,opt::end_bound); }
+	if (opt::region_defined) { 
+		subset_het_sites(vvec,opt::start_bound,opt::end_bound); 
+	}
         if (opt::technology == "pacbio" || opt::technology == "tenx" || opt::technology == "illumina" || opt::technology == "nanopore" ) {
                 connect_up_variants_bam_pileup(vvec,opt::input_bam_file,chromosome,vgraph,rgraph,opt::technology);
                 if(opt::multiple_bams) { connect_up_variants_bam_pileup(vvec,opt::second_input_bam_file,chromosome,vgraph,rgraph,opt::technology); }

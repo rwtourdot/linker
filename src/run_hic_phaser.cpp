@@ -123,6 +123,7 @@ void run_hic_phaser( int argc, char** argv ) {
 	//if (opt::region_defined) { subset_het_sites(vvec,opt::start_bound,opt::end_bound); }
         connect_up_variants_hic_bam_pileup(pdict,opt::input_bam_file,chromosome,vgraph,rgraph,opt::technology);
         link_hashes(vgraph,rgraph);
+	calc_coverage_unique_hash(vgraph);
         //prune_graph(vgraph);
 	write_hic_links(vgraph,output_hic_file,opt::chr_choice);
         //static const std::size_t length = pdict.num_paired;
