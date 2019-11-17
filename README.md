@@ -44,9 +44,9 @@ cd ../..
 
 Description
 -----------
-Linker is a suite of tools useful for interpreting long or linked read sequencing of cancer genomes.  The key information long read sequencing provides is the germline haplotype of the cell line.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygosity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells genomic evolution.
+Linker is a suite of c++ tools useful for interpreting long and linked read sequencing of cancer genomes.  The most significant information long read sequencing provides is the local haplotype of a sample.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygosity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells genomic evolution.
 
-Linker currently supports 10X, Pacbio, Oxford Nanopore, and HiC sequencing technologies.  Some technologies work better in the specific tools listed below, and HiC requires a distinct phasing methodology.  A diagram of the analysis workflow is shown below.
+Linker currently supports 10X, Pacbio, Oxford Nanopore, and HiC sequencing technologies.  A diagram of the germline haplotype phasing workflow is shown below.
 
 <img src="https://github.com/rwtourdot/linker/blob/master/new_linker_flowchart.png" width=600/>
 
@@ -71,6 +71,40 @@ Commands
   * -n: (optional) id string for output files
   * -b: (optional) binsize (default is 10kb - 10000)
 
+#### Extract Phasing Information from Long and Linked Reads
+
+This command extracts all long and linked read phasing information from an aligned bamfile given a corresponding vcf file containing heterozygous sites.  The long read technology flag (tenx,pacbio,nanopore,hic) should correspond to the bamfile chosen.
+
+```
+./linker extract -i ./input.bam -v het_sites.vcf -e tenx -c chr21 -n sample_name
+```
+  * Output is a graph file: graph_variant_{}.dat
+
+The output of this command is a graph_variant file which lists all of the unique hashes associated with each het site base.  This file can be concatenated with other graph_variant files, to combine all phasing information from multiple technologies.  
+
+#### Solve For Germline Haplotype from Long Read Links
+
+After extracting all phasing information into graph_variant files and combining or trimming certain hashes the samples haplotype can be solved for by:
+
+```
+./linker solve -i ./graph_variant_{}_chr21.dat -c chr21 -n sample_name
+```
+  * Output is the haplotype solution file: hap_solution_{}.dat
+
+The haplotype file contains a Block Switch Energy column which can be used to define blocks.  The lower (more negative) the block energy the more likely a heterozygous site is phased correctly. More details on defining blocks can be found in the paper.
+
+#### Generate A Whole Chromosome Haplotype Scaffold
+
+This command takes a haplotype solution file and combines it with hic phasing information in a corresponding graph_variant_hic file to generate a full chromosome haplotype scaffold.  An energy cutoff which defines haplotype blocks is specified by the -e flag.
+
+```
+./linker scaffold -i ./hap_solution_{}_chr21.dat -g ./graph_variant_hic_chr21.dat -e -700 -c chr21 -n sample_name
+```
+  * Output is a haplotype scaffold file: hap_full_scaffold_{}.dat
+
+The hap_full_scaffold file contains less heterozygous sites than the haplotype solution file but is accurate over the full length of the chromosome.
+
+<!--
 #### Phase Germline Haplotypes from Long and Linked Reads
 
 This commmand takes in a vcf file and a long or linked read bam file to compute phased haplotype blocks.  The vcf file should contain all germline heterozygous sites and most likely originates from a paired normal sample.  The bam file or files should be obtained with a long read technology and could originate for tumor, normal, or tumor+normal.
@@ -82,7 +116,9 @@ This commmand takes in a vcf file and a long or linked read bam file to compute 
   * Output is haplotype solution file: haplotype_solution.dat
 
 The output of this command is a file which contains the minimum energy solution to the germline haplotype.  More information on this file is described in the I/O section below.
+-->
 
+<!--
 #### Extract Heterozygous Site Coverage
 
 This command takes a vcf and bam file and extracts the read coverage of each allele. In order to count a base at a heterozygous site both the base quality and read map quality must pass a cutoff.
@@ -112,15 +148,6 @@ Once haplotypes are found, associated Structural Variants can be phased with a 1
 ```
   * Output is a phased sv file: sv_phased.dat
 
-#### Phase Germline with HiC (clonal sample)
-
-HiC data can be phased in a similar fashon to SV's.  This command takes an input HiC bam file and a vcf file or coverage file and phases any chromosome contacts which overlap a het site.  HiC data is sparse and a connection of two het sites does not guarantee they are on the same allele.  HiC phasing data is therefore probibalistic and requires another long or linked read technology to phase accurately.
-
-```
-./linker hic_phase -i ./input.bam -m ./coverage.dat -c chr4 -n august15
-```
-  * Output is a phased hic het link file: hic_links.dat
-
 #### Create Linked Read Matrix
 
 A local alignment map can be extracted from any long or linked read technology. This map does not contain any allelic information but can more clearly show translocations and inversions.
@@ -147,6 +174,7 @@ In order refine variant calls it can be useful to use allele fraction from a nor
 ```
 ./linker bx_bin -i ./input.bam -e tenx -c chr4 -b 10000 -n august15
 ```
+-->
 
 Input/Output
 --------
