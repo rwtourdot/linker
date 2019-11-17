@@ -18,6 +18,7 @@ public:
     typedef std::map<size_t, T> col_t;
     typedef typename col_t::iterator col_iter;
     mat_t mat;
+    map_matrix(){ }
     map_matrix(size_t i){ m=i; n=i; length = i; }
     map_matrix(size_t i, size_t j){ m=i; n=j; length = i; }
     T& operator()(size_t i, size_t j) { if(i>=m || j>=n) throw; return mat[i][j]; }

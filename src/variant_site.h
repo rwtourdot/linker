@@ -28,6 +28,7 @@ public:
     int unique_total;
     std::string var_base,ref_base,variant_id;
     std::vector<std::string> connected_reads_long_form,connected_hets;
+    std::vector<std::string> connected_readnames;
     std::unordered_map<char,int> base_dict;  // have to add a function to add bases
     std::unordered_map<char,int> unique_dict; 
     std::unordered_map<char,std::vector<std::string>> base_dict_tags;
@@ -35,7 +36,7 @@ public:
     std::unordered_map<std::string,int> connections;
     void set_values(int,bool,std::string,std::string);
     void reset_values(int,bool,std::string,std::string,int,int,int,int,int,int);
-    void add_connected_read(std::string);
+    void add_connected_read(std::string,std::string);
     void add_connection(std::string);
     void count_connections();
     void add_base_to_dict(char,std::string);

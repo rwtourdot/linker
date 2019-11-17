@@ -17,18 +17,21 @@ using namespace std;
 class coord_dictionary {
 public:
     vector<double> deltaE,switchE;
-    vector<int> block;
+    vector<double> deltaE_total,switchE_total;
+    vector<int> block,block_total;
+    vector<int> span_bound,span_bound_total;
     vector<int> haplotype;
+    vector<std::string> ref_handle,alt_handle;
     vector<bool> reload_bool;
-    vector<bool> within_filter;
-    vector<int> sorted_paired_positions,double_positions;
+    vector<bool> within_filter,within_filter_total;
+    vector<int> sorted_paired_positions,double_positions,all_positions,sorted_all_positions;
     vector<int> up_bound_submatrix,low_bound_submatrix;
-    vector<int> flip_up_bound,flip_low_bound,span_bound;
+    vector<int> flip_up_bound,flip_low_bound;
     std::unordered_map<int,std::vector<std::string> > paired_dict;
     std::unordered_map<int,int> ref_index;
     std::unordered_map<int,std::vector<int> > base_number;
-    int num_paired;
-    void initialize( std::unordered_map<std::string,variant_node>& );
+    int num_paired,num_total;
+    void initialize( std::unordered_map<std::string,variant_node>& , bool paired );
     void get_submatrix_bounds( map_matrix<int>& );
     void hap_random_initialization();
     void hap_zero_initialization();

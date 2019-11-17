@@ -33,6 +33,7 @@ void initialize_copy_num_map( cn_map& chromosome_map, coord_dictionary& pdict, v
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 double calc_switch( cn_map& chromosome_map, int index1, int index2 ) {
 	double hapA_one,hapB_one,hapA_two,hapB_two;
 	if ( chromosome_map[index1].switch_spin == 1 ) { hapA_one = chromosome_map[index1].hapA_avg; hapB_one = chromosome_map[index1].hapB_avg; }
@@ -79,18 +80,22 @@ double calc_switch_merge( cn_map& chromosome_map, std::vector<int> merged_index1
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void cn_phasing( cn_map& chromosome_map, std::vector<int>& bin_array, std::vector<int>& good_bins, std::vector<int>& rec_bins, std::vector<int>& merged_bins ) {
-        int k = 0;
+        //int k = 0;
         for (auto i : bin_array) {
-                if (chromosome_map[i].num_blocks == 1 && chromosome_map[i].num_hets > (minimum_snp-1)) { good_bins.push_back(k); }
-                k++;
+		//cout << i << "\t" << chromosome_map[i].num_blocks << "\t" << chromosome_map[i].num_hets << endl; 
+                if (chromosome_map[i].num_blocks == 1 && chromosome_map[i].num_hets > (minimum_snp-1)) {
+			//good_bins.push_back(k); 
+			good_bins.push_back(i); 
+		}  //k++;
         }
+	cout << "subset good bins: " << good_bins.size() << endl; 
 	cn_phase_between_blocks( chromosome_map, good_bins ); 
 	//for (int j = 0; j < 3; j++) { 
 	//	cn_phase_loop( chromosome_map, good_bins ); 
 	//}
 	for (int j = 0; j < 1; j++) { merge_bins( chromosome_map, good_bins, merged_bins ); }
 	////////////////////////////// updated bin printing
-	rescue_bad_bins( chromosome_map, bin_array, good_bins, rec_bins );
+	//rescue_bad_bins( chromosome_map, bin_array, good_bins, rec_bins );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,12 +196,13 @@ void cn_phase_loop( cn_map& chromosome_map, std::vector<int>& good_bins ) {  //,
 void cn_phase_between_blocks( cn_map& chromosome_map, std::vector<int>& good_bins ) {  //, std::vector<int>& bin_array
         int nbins = good_bins.size(); int m=0;
         for (auto ind : good_bins) {   //if ( m < 10) {
-                if (nbins > (m+1)) {
+                if (nbins > (m+1)) { 
                         int next = good_bins[m+1];
                         double min_switch_prob = calc_switch(chromosome_map,ind,next);
                         double hapA_one,hapB_one,hapA_two,hapB_two;
 			int block_ind = chromosome_map[ind].het_block[0];
 			int block_next = chromosome_map[next].het_block[0];
+			//cout << ind << "\t" << next << endl;
 			//int num_block_ind = chromosome_map[ind].num_blocks;
 			//int num_block_next = chromosome_map[next].num_blocks;
                         if ( chromosome_map[ind].switch_spin == 1 ) {    hapA_one = chromosome_map[ind].hapA_avg; hapB_one = chromosome_map[ind].hapB_avg; }
@@ -217,6 +223,7 @@ void cn_phase_between_blocks( cn_map& chromosome_map, std::vector<int>& good_bin
 void merge_bins( cn_map& chromosome_map, std::vector<int>& good_bins, std::vector<int>& merged_bins ) {
 	int nbins = good_bins.size();
 	int m = 0;
+	double merge_energy_cutoff = -0.4;
 	int array_index = 0;
 	int merged_index = good_bins[0];
 	std::map<int,mbin> merged_vec;	
@@ -226,7 +233,7 @@ void merge_bins( cn_map& chromosome_map, std::vector<int>& good_bins, std::vecto
 			int next = good_bins[m+1];
 			double min_switch_prob = calc_switch(chromosome_map,ind,next);
 			cout << merged_index << " " << ind << " " << next << "  " << min_switch_prob << endl;
-			if ( min_switch_prob < -5 ) {
+			if ( min_switch_prob < merge_energy_cutoff ) {
 				merged_vec[array_index].set_energies(ind,min_switch_prob);	
 			}
 			else {
@@ -239,7 +246,7 @@ void merge_bins( cn_map& chromosome_map, std::vector<int>& good_bins, std::vecto
 		merged_bins.push_back(array_index);
 	}
 	for (auto const& x : merged_vec) {
-		cout << x.first << " " << x.second.bin_index << " " << x.second.num_mbins << endl;
+		//cout << x.first << " " << x.second.bin_index << " " << x.second.num_mbins << endl;
 		for (auto const& bin : x.second.merged_bins) {
 			cout << bin << endl;
 		}
@@ -252,11 +259,12 @@ void merge_bins( cn_map& chromosome_map, std::vector<int>& good_bins, std::vecto
 	}
 	int nbins_merged = good_merged.size();
 	int l = 0;
+	cout << "merged block phasing" << endl;
         for (auto ind : good_merged) {   //if ( m < 10) {
+		//cout << ind << endl;
                 if (nbins_merged > (l+1)) {
 			int next = good_merged[l+1];
-			//merged_vec[ind].merged_bins;
-			//merged_vec[next].merged_bins;
+			//merged_vec[ind].merged_bins;  //merged_vec[next].merged_bins;
 			int min_merge_bin = *std::min_element( merged_vec[next].merged_bins.begin(), merged_vec[next].merged_bins.end() );
 			double min_switch_prob = calc_switch_merge(chromosome_map,merged_vec[ind].merged_bins,merged_vec[next].merged_bins);
 			cout << merged_vec[ind].bin_index << " " << merged_vec[ind].num_mbins << " " << min_switch_prob << endl;

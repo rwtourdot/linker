@@ -28,6 +28,10 @@ static const char *FILTER_USAGE_MESSAGE =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_filtering_options( int argc, char** argv ) {
         bool die = false;
+        if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
+                std::cerr << "\n" << FILTER_USAGE_MESSAGE;
+                exit(1);
+        }
         for (char c; (c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1;) {
                 std::istringstream arg(optarg != NULL ? optarg : "");
                 switch (c) {
@@ -104,13 +108,14 @@ void run_variant_filtering( int argc, char** argv ) {
         variant_graph vgraph;
         coord_dictionary pdict;
         read_het_coverage( opt::normal_cov_file, vgraph );
-	initialize_pdict( vgraph, pdict );
+	bool paired = true;
+	initialize_pdict( vgraph, pdict, paired );
 	/////////// load tumor coverage  
 	variant_graph vgraph2;
 	coord_dictionary pdict2;
 	if(opt::filter_tumor) { read_het_coverage( opt::tumor_cov_file, vgraph2 ); }
 	else { read_het_coverage( opt::normal_cov_file, vgraph2 ); }
-	initialize_pdict( vgraph2, pdict2 );
+	initialize_pdict( vgraph2, pdict2, paired );
 	///////////
 	filter_het_sites( pdict, pdict2, vgraph, vgraph2 );
         //##############################################

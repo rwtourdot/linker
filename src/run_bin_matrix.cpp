@@ -24,7 +24,7 @@ static const char *MATRIX_USAGE_MESSAGE =
 "\n"
 "  Options\n"
 "  -i,      input bamfile path \n"
-"  -e,      long read tech (tenx,pacbio) \n"
+"  -e,      long read tech (tenx, pacbio, nanopore, illumina, hic) \n"
 "  -c,      chromosome name ( chr4 ) or contig name depending on bam \n"
 "  -n,      id string for output files \n"
 "  -b,      binsize - raw base number (default 10000 - 10kb) \n"
@@ -33,6 +33,10 @@ static const char *MATRIX_USAGE_MESSAGE =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_bin_matrix_options( int argc, char** argv ) {
         bool die = false;            //cout << "there are " << argc << " arguments:\n";
+        if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
+                std::cerr << "\n" << MATRIX_USAGE_MESSAGE;
+                exit(1);
+        }
         for (char c; (c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1;) {
                 std::istringstream arg(optarg != NULL ? optarg : "");
                 switch (c) {

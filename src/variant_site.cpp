@@ -33,7 +33,10 @@ void variant_node::count_connections() {
 
 void variant_node::add_connection( std::string hashname ) { connections[hashname] += 1; };
 
-void variant_node::add_connected_read( std::string readhash_long ) { connected_reads_long_form.push_back(readhash_long); }
+void variant_node::add_connected_read( std::string readhash_long, std::string readname ) { 
+    connected_reads_long_form.push_back(readhash_long);
+    connected_readnames.push_back(readname); 
+}
 
 void variant_node::reset_values( int position, bool variant, std::string variant_base, std::string reference_base, int abase, int tbase, int cbase, int gbase, int dbase, int ibase ) {
     pos = position;                 // int

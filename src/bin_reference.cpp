@@ -51,4 +51,14 @@ void cn_bin::cov_calc() {
     if (num_hets == 0 || hapB_tot == 0) { hapB_avg = 0.0; }
 }
 
+void cn_bin::enter_coverage( double hap1_cn, double hap2_cn, int block ) {
+     hapA_avg = hap1_cn;
+     hapB_avg = hap2_cn;
+     num_hets = 10;
+     num_blocks = 1;
+     het_block.push_back(block);
+}
+
+
+
 

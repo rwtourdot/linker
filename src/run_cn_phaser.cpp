@@ -30,6 +30,10 @@ static const char *CN_PHASE_USAGE_MESSAGE =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_cn_phaser_options( int argc, char** argv ) {
         bool die = false;
+        if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
+                std::cerr << "\n" << CN_PHASE_USAGE_MESSAGE;
+                exit(1);
+        }
         for (char c; (c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1;) {
                 std::istringstream arg(optarg != NULL ? optarg : "");
                 switch (c) {
@@ -60,23 +64,24 @@ void run_cn_phaser(int argc, char** argv) {
         std::string outputFile = "./output/cn_phased_" + opt::id_string + ".dat";
         variant_graph vgraph;
         coord_dictionary pdict;
-	read_het_coverage( opt::input_cov_file, vgraph );
-	initialize_pdict( vgraph, pdict );
+	//read_het_coverage( opt::input_cov_file, vgraph );
+	//bool paired = true;
+	//initialize_pdict( vgraph, pdict, paired );
 	/////////////////////////////////////////
-	pdict.hap_zero_initialization();
-	read_hap_solution( opt::input_hap_file, pdict );
+	//pdict.hap_zero_initialization();
+	//read_hap_solution( opt::input_hap_file, pdict );
 	/////////////////////////////////////////
 	cn_map chromosome_map;
 	std::vector<int> bin_array,good_bins,merged_bins,rec_bins;
-	initialize_copy_num_map( chromosome_map, pdict, vgraph, opt::binsize, bin_array );
+	read_bin_haplotype_cn_data( opt::input_cov_file, chromosome_map, opt::binsize, bin_array );
+	//initialize_copy_num_map( chromosome_map, pdict, vgraph, opt::binsize, bin_array );
 	cout << " cn phasing section " << endl;
 	cn_phasing( chromosome_map, bin_array, good_bins, rec_bins, merged_bins );
-	write_cn_phased( chromosome_map, outputFile, rec_bins, merged_bins );
-        cout << " cn phasing coming soon " << endl;
+	write_cn_phased_bins( chromosome_map, outputFile, good_bins, merged_bins );
+	//write_cn_phased( chromosome_map, outputFile, rec_bins, merged_bins );
+        //cout << " cn phasing coming soon " << endl;
         return;
 };
-
-	//write_cn_phased( chromosome_map, outputFile, good_bins, merged_bins );
 
         //if ( opt::input_cov_file.substr(opt::input_cov_file.length() - 4) == ".vcf" ) {
         //   vcf_vector vvec;
@@ -92,10 +97,6 @@ void run_cn_phaser(int argc, char** argv) {
 
 
 
-        //std::vector<int> bin_array;
-        //std::vector<int> good_bins;
-        //std::vector<int> merged_bins;
-        //std::vector<int> rec_bins;
 
 
 

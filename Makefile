@@ -20,6 +20,25 @@ LBAMTOOLS=-lbamtools
 LHTS=-lhts
 LZLIB=-lz
 LCURL=-lcurl
+LIBRARIES=$(LHTS) $(LZLIB) $(LBAMTOOLS) $(LCURL)
+ifeq ($(UNAME_S),Darwin)
+  CC := clang++ -std=c++11 -stdlib=libc++
+else
+  CC := c++ -o3 -std=c++11
+endif
+
+LDIR=./packages/bamtools/lib/
+IDIR2=./htslib/
+LDIR2=./packages/htslib/lib/
+IDIR=./packages/bamtools/include/bamtools/
+IDIR3=./packages/bamtools/lib/
+
+CFLAGS=-I$(IDIR) -I$(IDIR2)
+LFLAGS=-L$(LDIR) -L$(LDIR2) -Wl,-rpath,$(IDIR2),-rpath,$(IDIR3) #-L$(LDIR3)
+LBAMTOOLS=-lbamtools
+LHTS=-lhts
+LZLIB=-lz
+LCURL=-lcurl
 LIBRARIES=$(LHTS) $(LZLIB) $(LBAMTOOLS) $(LCURL) 
 #CCPLUS=$(CC) $(LFLAGS) $(CFLAGS)
 

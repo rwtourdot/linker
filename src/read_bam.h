@@ -33,6 +33,7 @@ using namespace std;
 #define minimum_mapq_hic 20                 // read map quality greater than {val}
 #define minimum_baseq 8                 // read base quality greater than {val}
 #define minimum_baseq_hic 20                 // read base quality greater than {val}
+#define minimum_baseq_tenx 20                 // read base quality greater than {val}
 
 //#define binsize 10000                   // 10 kb
 #define minimum_contig 1000000          // 1 Mb

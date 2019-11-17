@@ -69,6 +69,10 @@ static void parse_region_string( std::string samtools_region ) {
 static void parse_hic_phaser_options( int argc, char** argv ) {
 	bool die = false;
 	//if(argc <= 2) { die = true; }
+        if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
+                std::cerr << "\n" << HIC_PHASER_USAGE_MESSAGE;
+                exit(1);
+        }
         for (char c; (c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1;) {
                 std::istringstream arg(optarg != NULL ? optarg : "");
                 switch (c) {
@@ -113,12 +117,13 @@ void run_hic_phaser( int argc, char** argv ) {
         vcf_vector vvec;
         read_graph rgraph;
         variant_graph vgraph;
+	bool paired = true;
         contig_name_map(opt::input_bam_file,chr_str_map);
         int chromosome = chr_str_map[opt::chr_choice];
 	//##################
         read_het_coverage( opt::input_het_cov, vgraph );
         //vvec = load_vcf_file(opt::input_vcf_file,chromosome);
-        initialize_pdict( vgraph, pdict );
+        initialize_pdict( vgraph, pdict, paired );
         //#################### start of code ##########################
 	//if (opt::region_defined) { subset_het_sites(vvec,opt::start_bound,opt::end_bound); }
         connect_up_variants_hic_bam_pileup(pdict,opt::input_bam_file,chromosome,vgraph,rgraph,opt::technology);

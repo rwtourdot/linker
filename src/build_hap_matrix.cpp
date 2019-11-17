@@ -5,11 +5,11 @@ void link_hashes( std::unordered_map<std::string,variant_node>& var_dict, std::u
         cout << "========" << endl;
         int i = 0;   clock_t t;
         t = clock();
-        for (auto& it : var_dict) {
-                int j = 0;
+        for (auto& it : var_dict) {  //int j = 0;
                 for (int l=0; l < it.second.connected_reads_long_form.size(); l++) {
                         for (int m=0; m < read_graph[it.second.connected_reads_long_form[l]].connected_strings.size(); m++) {
                                 std::string connected_het = read_graph[it.second.connected_reads_long_form[l]].connected_strings[m];
+				//cout << i << "\t" << it.second.connected_reads_long_form[l] << "\t" << endl;
                                 if (connected_het != it.first) { it.second.add_connection(connected_het); }
                         }
                 }
@@ -90,7 +90,7 @@ void link_matrix_calculations( map_matrix_vector& expanded, map_matrix<int>& nma
 ptrdiff_t get_index_var( vector<int> paired_pos, int find_p ) { return std::find(paired_pos.begin(),paired_pos.end(),find_p) - paired_pos.begin(); };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-void initialize_pdict( std::unordered_map<std::string,variant_node>& var_dict, coord_dictionary& pdict ) { pdict.initialize(var_dict); }
+void initialize_pdict( std::unordered_map<std::string,variant_node>& var_dict, coord_dictionary& pdict, bool paired ) { pdict.initialize(var_dict,paired); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void initialize_solver( std::unordered_map<std::string,variant_node>& var_dict, coord_dictionary& pdict, map_matrix<double>& diff_matrix, map_matrix<int>& num_matrix_second ) {

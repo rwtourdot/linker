@@ -7,6 +7,8 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <list>
+#include <algorithm>
 using namespace std;
 
 ///////////// het filtering cutoffs ///
@@ -34,6 +36,9 @@ extern "C" {
   #include "htslib/vcfutils.h"
   #include "htslib/synced_bcf_reader.h"
 }
+
+//////////////////////////////////////////////
+//std::list<std::string> allowed_base_list = { "A","T","C","G"};
 
 /////////////// functions /////////////////////
 std::vector<vcf_entry> load_and_filter_vcf_file( std::string input_vcf_file, int chromosome, std::string chr_string, std::string hetfilterFile );

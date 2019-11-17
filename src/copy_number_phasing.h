@@ -19,7 +19,9 @@ using namespace std;
 #define min_switch 10  //10
 #define min_switch_two 6  //10
 #define minimum_snp 8
-#define first_pass_switch 4 // this should be small as it is used to phase between blocks
+//#define first_pass_switch 4 // this should be small as it is used to phase between blocks
+//#define first_pass_switch 0.3 // this should be small as it is used to phase between blocks
+#define first_pass_switch 0.1 // this should be small as it is used to phase between blocks
 
 /////////////// functions /////////////////////
 void initialize_copy_num_map( cn_map& chromosome_map, coord_dictionary& pdict, variant_graph& vgraph, int binsize, std::vector<int>& bin_array );

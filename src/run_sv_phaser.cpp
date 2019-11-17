@@ -21,7 +21,7 @@ static const struct option longopts[] = {
 
 ///////////////////////////////////////////////
 static const char *SV_USAGE_MESSAGE =
-"Usage: linker sv_check [OPTION] -v /path/to/vcffile.vcf -i /path/to/bamfile.bam -s /path/to/svfile.txt \n\n"
+"Usage: linker sv_phase [OPTION] -v /path/to/vcffile.vcf -i /path/to/bamfile.bam -s /path/to/svfile.txt \n\n"
 "\n"
 "  Options\n"
 "  -i,      input bamfile path \n"
@@ -34,6 +34,10 @@ static const char *SV_USAGE_MESSAGE =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_sv_options( int argc, char** argv ) {
         bool die = false;
+        if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
+                std::cerr << "\n" << SV_USAGE_MESSAGE;
+                exit(1);
+        }
         for (char c; (c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1;) {
                 std::istringstream arg(optarg != NULL ? optarg : "");
                 switch (c) {

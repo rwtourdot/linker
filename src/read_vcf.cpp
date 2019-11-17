@@ -13,6 +13,7 @@ std::vector<vcf_entry> load_and_filter_vcf_file( std::string input_vcf_file, int
         int nad_arr = 0; int nad     = 0; int *ad     = NULL; // coverage data for each call
         int ngt_arr = 0; int ngt     = 0; int *gt     = NULL; // genotype data for each call
         std::string ref_base,var_base;
+	std::list<std::string> allowed_base_list = { "A","T","C","G"};
         std::vector<vcf_entry> entry;    //kstring_t filter;
         int rec_position,rec_id,len_ref;
         int i = 0;
@@ -26,6 +27,9 @@ std::vector<vcf_entry> load_and_filter_vcf_file( std::string input_vcf_file, int
                 if (line->rid == chromosome) {
                         ref_base = line->d.allele[0];
                         var_base = line->d.allele[1];
+			bool ref_found = ( std::find( allowed_base_list.begin(), allowed_base_list.end(), ref_base) != allowed_base_list.end() );
+			bool var_found = ( std::find( allowed_base_list.begin(), allowed_base_list.end(), var_base) != allowed_base_list.end() );
+			if ( ref_found && var_found ) {
                         rec_position = line->pos;
                         rec_id = line->rid;
                         len_ref = line->rlen;  //filter = line->shared;
@@ -54,6 +58,7 @@ std::vector<vcf_entry> load_and_filter_vcf_file( std::string input_vcf_file, int
                                 }
                                 }
                         }
+			}
                 }
         }
         bcf_hdr_destroy(hdr);
@@ -67,6 +72,7 @@ std::vector<vcf_entry> load_and_filter_vcf_file( std::string input_vcf_file, int
 std::vector<vcf_entry> load_vcf_file( std::string input_vcf_file, int chromosome ) {
         std::string ref_base,var_base;
         std::vector<vcf_entry> entry;
+	std::list<std::string> allowed_base_list = { "A","T","C","G"};
         int rec_position,rec_id,len_ref;
         bcf_srs_t *sr = bcf_sr_init();
         bcf_sr_add_reader(sr,input_vcf_file.c_str());
@@ -75,9 +81,13 @@ std::vector<vcf_entry> load_vcf_file( std::string input_vcf_file, int chromosome
         while(bcf_sr_next_line(sr)) {
 		line = bcf_sr_get_line(sr,0);
 		if (line->rid == chromosome) {
-			if ((DEBUG == 1) && (i > het_cutoff)) { break; }
+			//if ((DEBUG == 1) && (i > het_cutoff)) { break; }
 			ref_base = line->d.allele[0];
 			var_base = line->d.allele[1];
+                        bool ref_found = ( std::find( allowed_base_list.begin(), allowed_base_list.end(), ref_base) != allowed_base_list.end() );
+                        bool var_found = ( std::find( allowed_base_list.begin(), allowed_base_list.end(), var_base) != allowed_base_list.end() ); 
+			//cout << ref_base << " " << var_base << " " << ref_found << " " << var_found << endl;
+                        if ( ref_found && var_found ) {
 			rec_position = line->pos;	
 			rec_id = line->rid;
 			len_ref = line->rlen;
@@ -86,6 +96,7 @@ std::vector<vcf_entry> load_vcf_file( std::string input_vcf_file, int chromosome
 			entry[i].ref_base = ref_base;   entry[i].var_base = var_base;
 			entry[i].bounded = true;
 			i += 1;
+			}
 		}
         }
       	return entry;
@@ -95,6 +106,7 @@ std::vector<vcf_entry> load_vcf_file( std::string input_vcf_file, int chromosome
 std::vector<vcf_entry> load_vcf_file_coverage( std::string input_vcf_file, int chromosome ) {
         std::string ref_base,var_base;
         std::vector<vcf_entry> entry;
+	std::list<std::string> allowed_base_list = { "A","T","C","G"};
         int rec_position,rec_id,len_ref,nallele;
         bcf_srs_t *sr = bcf_sr_init();
         bcf_sr_add_reader(sr,input_vcf_file.c_str());
@@ -110,10 +122,13 @@ std::vector<vcf_entry> load_vcf_file_coverage( std::string input_vcf_file, int c
         while(bcf_sr_next_line(sr)) {
                 line = bcf_sr_get_line(sr,0);
                 if (line->rid == chromosome) {  //while ( bcf_read(inf, hdr, rec)>=0 ) {
-                        if ((DEBUG == 1) && (i > het_cutoff)) { break; }
+                        //if ((DEBUG == 1) && (i > het_cutoff)) { break; }
 			//seqnames = bcf_hdr_seqnames(hdr, &nseq);
                         ref_base = line->d.allele[0];
                         var_base = line->d.allele[1];
+			bool ref_found = ( std::find( allowed_base_list.begin(), allowed_base_list.end(), ref_base) != allowed_base_list.end() );
+			bool var_found = ( std::find( allowed_base_list.begin(), allowed_base_list.end(), var_base) != allowed_base_list.end() );
+			if ( ref_found && var_found ) {
                         rec_position = line->pos;
                         rec_id = line->rid;
                         len_ref = line->rlen;
@@ -135,6 +150,7 @@ std::vector<vcf_entry> load_vcf_file_coverage( std::string input_vcf_file, int c
 			for (int k=0; k<bcf_hdr_nsamples(hdr); k++){
 			}
                         i += 1; //}
+			}
                 }
         }
         bcf_hdr_destroy(hdr);
@@ -147,6 +163,7 @@ std::vector<vcf_entry> load_vcf_file_coverage( std::string input_vcf_file, int c
 std::vector<vcf_entry> load_vcf_file_total( std::string input_vcf_file ) {
         std::string ref_base,var_base;
         std::vector<vcf_entry> entry;
+	std::list<std::string> allowed_base_list = { "A","T","C","G"};
         int rec_position,rec_id,len_ref;
         bcf_srs_t *sr = bcf_sr_init();
         bcf_sr_add_reader(sr,input_vcf_file.c_str());
@@ -156,6 +173,9 @@ std::vector<vcf_entry> load_vcf_file_total( std::string input_vcf_file ) {
                 line = bcf_sr_get_line(sr,0);
                 ref_base = line->d.allele[0];
                 var_base = line->d.allele[1];
+		bool ref_found = ( std::find( allowed_base_list.begin(), allowed_base_list.end(), ref_base) != allowed_base_list.end() );
+		bool var_found = ( std::find( allowed_base_list.begin(), allowed_base_list.end(), var_base) != allowed_base_list.end() );
+		if ( ref_found && var_found ) {
                 rec_position = line->pos;
                 rec_id = line->rid;
                 len_ref = line->rlen;
@@ -164,6 +184,7 @@ std::vector<vcf_entry> load_vcf_file_total( std::string input_vcf_file ) {
                 entry[i].ref_base = ref_base;   entry[i].var_base = var_base;
                 entry[i].bounded = true;
                 i += 1;
+		}
         }
         return entry;
 };

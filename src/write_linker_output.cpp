@@ -90,6 +90,44 @@ void write_hic_links( std::unordered_map<std::string,variant_node>& var_dict, st
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+void write_scaffold( std::string chr_choice, std::string outputFile, block_dictionary& bl_dict, coord_dictionary& pdict, int centromere_pos ) {
+        ofstream ofile; ofile.open(outputFile);
+	for (int i = 0; i < pdict.num_paired; i++) {
+		int pos1 = pdict.double_positions[i];
+                int hap1 = pdict.haplotype[i];
+                int block1 = pdict.block[i];
+		if ( std::find( bl_dict.subset_blocks.begin(), bl_dict.subset_blocks.end(), block1 ) != bl_dict.subset_blocks.end() )  {
+                double deltaE = pdict.deltaE[i];
+                double switchE = pdict.switchE[i];
+                std::string ref_hash = pdict.ref_handle[i];
+                std::string alt_hash = pdict.alt_handle[i];
+		int block_hap1 = bl_dict.subset_haplotype[bl_dict.block_map[block1]];
+		std::string arm1 = "p"; if ( pos1 > centromere_pos ) { arm1 = "q"; };
+		ofile << chr_choice << "\t" << arm1 << "\t" << pos1 << "\t" << ref_hash << "\t" << alt_hash << "\t" << hap1*block_hap1 << "\t" << "block:" << "\t" << block_hap1 << "\t" << block1 << "\t" << "tenx_energy(spin/block):" << "\t" << deltaE << "\t" << switchE << endl;
+		}
+	}
+        ofile.close();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void write_scaffold_energy( std::string chr_choice, std::string outputFile, block_dictionary& bl_dict, int centromere_pos ) {
+        ofstream ofile; ofile.open(outputFile);
+        for (int j = 0; j < bl_dict.length_subset; j++) {
+                int block = bl_dict.subset_blocks[j];
+                int nhets = bl_dict.num_hets[block];
+                int blhap = bl_dict.subset_haplotype[j];
+                double deltaE = bl_dict.subset_deltaE[j];
+                double switchE = bl_dict.subset_switchE[j];
+                int min_pos = *min_element(bl_dict.bl_pos[block].begin(), bl_dict.bl_pos[block].end());
+                int max_pos = *max_element(bl_dict.bl_pos[block].begin(), bl_dict.bl_pos[block].end());
+		std::string arm1 = "p"; if ( min_pos > centromere_pos ) { arm1 = "q"; };
+                //cout << j << "\t" << block << "\t" << min_pos << "\t" << max_pos << "\t" << nhets << "\t" << blhap << "\t" << deltaE << "\t" << switchE << endl;
+                ofile << j << "\t" << block << "\t" << arm1 << "\t" << min_pos << "\t" << max_pos << "\t" << nhets << "\t" << blhap << "\t" << deltaE << "\t" << switchE << endl;
+        }
+        ofile.close();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 void write_link_network( std::unordered_map<std::string,variant_node>& var_dict, std::string outputFile, std::string chr_choice ) {   // cout << " writing network file " << endl;
         ofstream ofile; ofile.open(outputFile);
         for (auto& it : var_dict) {
@@ -109,6 +147,62 @@ void write_link_network( std::unordered_map<std::string,variant_node>& var_dict,
         }
         ofile.close();
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void write_variant_link_list( std::unordered_map<std::string,variant_node>& var_dict, read_graph& rgraph, std::string outputFile, std::string chr_choice ) {
+        ofstream ofile; ofile.open(outputFile);
+        for (auto& it : var_dict) {
+                std::string variant_string = it.first;
+                std::vector<std::string> hash_connections = it.second.connected_reads_long_form;
+                std::vector<std::string> hash_readnames = it.second.connected_readnames;
+                for (int j = 0; j < hash_connections.size(); j++) {
+                        ofile << variant_string << "\t" << chr_choice << "\t" << it.second.pos << "\t" << hash_connections[j] << "\t" << hash_readnames[j] << endl;
+                }
+        }
+        ofile.close();
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void write_hash_link_list( std::unordered_map<std::string,variant_node>& var_dict, read_graph& rgraph, std::string outputFile, std::string chr_choice ) {
+        ofstream ofile; ofile.open(outputFile);
+        for (auto& it : rgraph) {
+        	std::vector<std::string> het_connections = rgraph[it.first].connected_strings;
+        	std::vector<std::string> het_readnames = rgraph[it.first].connected_readnames;
+        	for (int j = 0; j < het_connections.size(); j++) {
+                	ofile << it.first << "\t" << chr_choice << "\t" << het_connections[j] << "\t" << het_readnames[j] << endl;
+                }
+        }
+        ofile.close();
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//void write_het_links( std::unordered_map<std::string,variant_node>& var_dict, std::string outputFile, std::string chr_choice ) { 
+//        ofstream ofile; ofile.open(outputFile);
+//        for (auto& it : var_dict) {
+//		std::string variant1 = chr_choice + "_" + it.first;
+//		for (auto it2 : it.second.connections) { 
+//			std::string variant2 = chr_choice + "_" it2.first;
+//		}
+//	}
+//	ofile.close();
+//}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void write_bx_links( read_graph &rgraph, std::string outputFile ) {
+        ofstream ofile; ofile.open(outputFile);
+        for (auto& it : rgraph) {
+		ofile << it.first << "\t" << it.second.num_cnx << "\t";
+		std::vector<std::string> het_connections = rgraph[it.first].connected_strings;
+		bool first_num = true;
+		for (int j = 0; j < het_connections.size(); j++) {
+			if (!first_num) { ofile << ','; }
+			first_num = false;
+			ofile << het_connections[j];
+		}
+		ofile << endl;
+	}
+	ofile.close();
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void write_hap_solution( std::unordered_map<std::string,variant_node>& var_dict, std::string hapsolutionFile, coord_dictionary& pdict, std::string chr_choice ) {
@@ -158,6 +252,19 @@ void write_bin_matrix_genome( full_map& chr_map, std::string outputFile, int bin
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+void write_block_phasing_matrix( block_dictionary& bl_dict, std::string outputFile ) {
+        ofstream ofile; ofile.open(outputFile);
+	for (int i = 0; i < bl_dict.length_subset; i++) {
+		for (int j = 0; j < bl_dict.length_subset; j++) {
+			if (bl_dict.subset_matrix(i,j) != 0) {
+				ofile << i << "\t" << j << "\t" << bl_dict.block_map_inverted[i] << "\t" << bl_dict.block_map_inverted[j] <<  "\t" << bl_dict.subset_haplotype[i] << "\t" << bl_dict.subset_haplotype[j] << "\t" << bl_dict.subset_matrix(i,j) << endl; 
+			}		
+		} 
+	}
+        ofile.close();
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 void write_phased_sv( std::vector<sv_entry>& sv_list, std::string outputFile ) {
 	ofstream ofile; ofile.open(outputFile);
         for (int i = 0; i < sv_list.size(); i++) {
@@ -197,6 +304,27 @@ void write_cn_phased( cn_map& chromosome_map, std::string outputFile, std::vecto
         ofile.close();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void write_cn_phased_bins( cn_map& chromosome_map, std::string outputFile, std::vector<int>& good_bins, std::vector<int>& merged_bins ) {
+        ofstream ofile; ofile.open(outputFile);
+        cout << "write output " << endl;
+	int nbins = good_bins.size();
+	int m = 0;
+	double min_switch_prob = 0;
+        for (auto ind : good_bins) {
+		if (nbins > (m+1)) {
+			int next = good_bins[m+1];
+			min_switch_prob = calc_switch(chromosome_map,ind,next);	
+		}
+                double hapA_cov,hapB_cov;
+                int output_hap = chromosome_map[ind].switch_spin;
+                if (output_hap == 1) {  hapA_cov = chromosome_map[ind].hapA_avg; hapB_cov = chromosome_map[ind].hapB_avg; }
+                if (output_hap == -1) { hapA_cov = chromosome_map[ind].hapB_avg; hapB_cov = chromosome_map[ind].hapA_avg; }
+                ofile << ind << "\t" << output_hap << "\t" << hapA_cov << "\t" << hapB_cov << "\t" << min_switch_prob << "\t" << merged_bins[m] << endl;
+                m += 1;
+        }
+        ofile.close();
+}
 
 
 

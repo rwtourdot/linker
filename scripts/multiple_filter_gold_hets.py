@@ -5,9 +5,9 @@ chrom_list = ["chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","ch
 
 ##########################################################
 het_file_folder = "./../output"
-het_file_tenx = "filtered_coverage_may23_normal_tenx_"
-het_file_pcrfree = "filtered_coverage_june11_PCRFree_normal_"
-het_file_illumina = "filtered_coverage_june11_illumina_normal_"
+het_file_tenx = "filtered_coverage_dec11_k562_bam1_"
+het_file_pcrfree = "filtered_coverage_dec11_k562_bam2_"
+het_file_illumina = "filtered_coverage_dec14_k562_"
 
 het_file_tenx_tumor = "filtered_coverage_may23_tumor_tenx_"
 het_file_pcrfree_tumor = "filtered_coverage_june11_PCRFree_tumor_"

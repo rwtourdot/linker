@@ -4,18 +4,21 @@
 static const char *LINKER_USAGE_MESSAGE =
 "############### running linker ############### \n"
 "Program: Linker \n"
-"Version: 2.3 \n"
+"Version: 4.2 \n"
 "Usage: linker <command> [options]\n\n"
 "Commands:\n"
-"	phase		phase germline haplotype from linked read sample \n"
-"	cn_phase	further phase genome due to LOH or aneuplody in genome \n"
-"	sv_phase	phase sv call on long reads \n"
-"	hic_phase	phase split reads in hic \n"
-"	coverage	extract coverage of each het site from bam file \n"
-"	matrix		bin genome and create linked read heatmap \n"
-" 	filter		filter normal variants by copy fraction \n"
-"	bx_bin          get unique bx coverage from 10X \n"
+"\textract\t\textract links \n"
+"\tmatrix\t\tbin genome and create linked read heatmap \n"
+"\tsolve\t\tsolve germline phase from extracted links \n"
+"\tscaffold\tcombine blocks and hic to phase whole chromosomes \n"
+"\trecover\t\trecover heterozygous sites lost in scaffold \n"
+"\tcoverage\textract coverage of each het site from bam file \n"
+"\tcn_phase\tfurther phase genome due to LOH or aneuplody in genome \n"
+"\tsv_phase\tphase sv call on long reads \n"
+"\tfilter\t\tfilter normal variants by copy fraction \n"
 "\n";
+//"	phase		(extract + solve) phase germline haplotype from linked read sample \n"
+//"	hic_phase	phase split reads in hic \n"
 
 
 int main(int argc, char** argv) {
@@ -27,8 +30,12 @@ int main(int argc, char** argv) {
     if (command == "help" || command == "--help") {
       std::cerr << LINKER_USAGE_MESSAGE;
       return 0;
-    } else if (command == "phase") { 
-	run_link_phaser(argc-1, argv+1);
+    //} else if (command == "phase") { 
+	//run_link_phaser(argc-1, argv+1);
+    } else if (command == "extract") { 
+	run_extract_hash(argc-1, argv+1);
+    } else if (command == "solve") {
+        run_solve_hap(argc-1, argv+1);
     } else if (command == "cn_phase") { 
 	run_cn_phaser(argc-1, argv+1);
     } else if (command == "coverage") { 
@@ -39,10 +46,12 @@ int main(int argc, char** argv) {
 	run_sv_phaser(argc-1, argv+1); 	
     } else if (command == "filter") {
         run_variant_filtering(argc-1, argv+1);
-    } else if (command == "bx_bin") {
-        run_bin_bxtag(argc-1, argv+1);
-    } else if (command == "hic_phase") {
-        run_hic_phaser(argc-1, argv+1);
+    //} else if (command == "hic_phase") {
+    //    run_hic_phaser(argc-1, argv+1);
+    } else if (command == "scaffold") {
+        run_scaffold(argc-1, argv+1);
+    } else if (command == "recover") {
+        run_recover(argc-1, argv+1);
     }
     else {
       std::cerr << LINKER_USAGE_MESSAGE;
@@ -53,3 +62,8 @@ int main(int argc, char** argv) {
   std::cerr << "done with linker" << std::endl;
   return 0;
 }
+
+//"	bx_bin          get unique bx coverage from 10X \n"
+    //} else if (command == "bx_bin") {
+    //    run_bin_bxtag(argc-1, argv+1);
+

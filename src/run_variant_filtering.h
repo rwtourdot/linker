@@ -20,7 +20,8 @@ using namespace std;
 #include "coord_dict.h"
 
 ////////////////////////////////
-#define filter_fraction 0.1                
+//#define filter_fraction 0.1                
+#define filter_fraction 0.2                
 //#define filter_fraction 0.25               
 //#define min_total_cov 30
 #define min_total_cov 5

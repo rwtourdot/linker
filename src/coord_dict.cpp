@@ -1,6 +1,6 @@
 #include "coord_dict.h"
 
-void coord_dictionary::initialize( std::unordered_map<std::string,variant_node> &var_dict ) {
+void coord_dictionary::initialize( std::unordered_map<std::string,variant_node> &var_dict , bool paired ) {
     for (auto it : var_dict) {
 	//if (it.second.bounded) {
         if (it.second.paired) {
@@ -11,15 +11,21 @@ void coord_dictionary::initialize( std::unordered_map<std::string,variant_node> 
             if (it.second.var) { ref_index[it.second.pos] = 1; base_number[it.second.pos].push_back(it.second.base_dict[vbase]); }
             else {               ref_index[it.second.pos] = 0; base_number[it.second.pos].push_back(it.second.base_dict[rbase]); }
         }
+	all_positions.push_back(it.second.pos);
 	//}
     }
     cout << " double positions: " << double_positions.size() << endl;
-    std::sort(double_positions.begin(),double_positions.end());
-    for (int i = 0; i < double_positions.size(); i+=2) {
-        sorted_paired_positions.push_back(double_positions[i]);
-    }
+    cout << " all positions: " << all_positions.size() << endl;
+    std::sort( double_positions.begin(), double_positions.end() );
+    /////////////////////////
+    std::sort( all_positions.begin(), all_positions.end() );
+    all_positions.erase( unique( all_positions.begin(), all_positions.end() ), all_positions.end() );
+    for (int i = 0; i < double_positions.size(); i+=2) { sorted_paired_positions.push_back(double_positions[i]); }
+    for (int i = 0; i < all_positions.size(); i+=1) { sorted_all_positions.push_back(all_positions[i]); }
     cout << " sorted paired positions: " << sorted_paired_positions.size() << endl;
+    cout << " sorted all positions: " << sorted_all_positions.size() << endl;
     num_paired = sorted_paired_positions.size();
+    num_total = sorted_all_positions.size();
     for (int i = 0; i < num_paired; i++) { 
 	deltaE.push_back(0.0); 
 	switchE.push_back(0.0); 
@@ -27,6 +33,13 @@ void coord_dictionary::initialize( std::unordered_map<std::string,variant_node> 
 	block.push_back(0);
 	within_filter.push_back(false); 
     };
+    //for (int i = 0; i < num_total; i++) {
+    //    deltaE_total.push_back(0.0);
+    //    switchE_total.push_back(0.0);
+    //    span_bound_total.push_back(0);
+    //    block_total.push_back(0);
+    //    within_filter_total.push_back(false);
+    //};
 }
 
 void coord_dictionary::get_submatrix_bounds( map_matrix<int> &nmatrix ) {

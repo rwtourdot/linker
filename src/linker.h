@@ -37,15 +37,19 @@ extern "C" {
 }
 
 //////////////// linker include ////////////////
-#include "run_link_phaser.h"
+//#include "run_link_phaser.h"
+#include "run_extract_hash.h"
+#include "run_solve_hap.h"
 #include "run_het_coverage.h"
 #include "run_cn_phaser.h"
 #include "run_bin_matrix.h"
 #include "run_sv_phaser.h"
 #include "run_variant_filtering.h"
-#include "run_bx_bin.h"
 #include "run_hic_phaser.h"
+#include "run_scaffold.h"
+#include "run_recover.h"
 
+//#include "run_bx_bin.h"
 /////////////// definitions ///////////////////
 ////#define DEBUG 1
 //#define DEBUG 0

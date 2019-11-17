@@ -42,6 +42,7 @@ public:
     void add_het(int,int,int,std::string,std::string,int,int);
     void cov_calc();
     void flip_hap();
+    void enter_coverage(double,double,int);
 };
 
 //////////////// structures //////////////////

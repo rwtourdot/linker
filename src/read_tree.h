@@ -9,14 +9,15 @@ using namespace std;
 
 //////////////// structures ///////////////////
 class read_tree {
+public:
     std::string readname;
     int num_cnx = 0;
-public:
     std::vector<std::string> connected_strings;
+    std::vector<std::string> connected_readnames;
     std::vector<int> connected_ints;
     std::vector<std::string> connected_chr;
-    void set_name(std::string);
-    void add_connection(std::string);
+    void set_name(std::string);   //void add_connection(std::string);
+    void add_connection(std::string,std::string);
     void add_connection_int(int,std::string);
 };
 
