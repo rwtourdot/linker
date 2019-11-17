@@ -48,7 +48,7 @@ Linker is a suite of tools useful for interpreting long or linked read sequencin
 
 Linker currently supports 10X, Pacbio, Oxford Nanopore, and HiC sequencing technologies.  Some technologies work better in the specific tools listed below, and HiC requires a distinct phasing methodology.  A diagram of the analysis workflow is shown below.
 
-<img src="https://github.com/rwtourdot/linker/blob/master/new_linker_flowchart.png" width=800/>
+<img src="https://github.com/rwtourdot/linker/blob/master/new_linker_flowchart.png" width=600/>
 
 Commands
 --------
