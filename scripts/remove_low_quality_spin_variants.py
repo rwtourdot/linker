@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import numpy as np
 import sys
@@ -51,22 +53,22 @@ def construct_vcf_dict(vcf_file_path,chr_dict,spin_cutoff):
         vcffile = vcf.Reader(open(vcf_file_path,"r"))   #vcffile = pysam.VariantFile(vcf_file_path,index_filename=vcf_file_path+".idx")
         vcf_writer = vcf.Writer(open('./RPE-1.hets.chr1-X.BA.SNP.rmcent.sfcut.vcf', 'w'), vcffile)
         variants_list = []
-	remove_counter = 0;
-	keep_counter = 0;
+        remove_counter = 0;
+        keep_counter = 0;
         for rec in vcffile:
             if rec.CHROM in chr_dict:
-		if (rec.POS-1) in chr_dict[rec.CHROM]:  #for tenx_rec in chr_dict[rec.CHROM]:
+                if (rec.POS-1) in chr_dict[rec.CHROM]:  #for tenx_rec in chr_dict[rec.CHROM]:
                     remove = False;  #print(chr_dict[rec.CHROM][rec.POS-1].spin_flipE)
-		    if abs(chr_dict[rec.CHROM][rec.POS-1].spin_flipE) < abs(spin_cutoff):
-			remove = True;
-			remove_counter += 1;  #print("remove",chr_dict[rec.CHROM][tenx_rec].spin_flipE)
+                    if abs(chr_dict[rec.CHROM][rec.POS-1].spin_flipE) < abs(spin_cutoff):
+                        remove = True;
+                        remove_counter += 1;  #print("remove",chr_dict[rec.CHROM][tenx_rec].spin_flipE)
                     if not remove:
-			keep_counter += 1;
-                	vcf_writer.write_record(rec)
-	print("removed: ",remove_counter)
-	print("keep: ",keep_counter)
-	vcf_writer.close()
-	#vcffile.close()
+                        keep_counter += 1;
+                        vcf_writer.write_record(rec)
+        print("removed: ",remove_counter)
+        print("keep: ",keep_counter)
+        vcf_writer.close()
+        #vcffile.close()
         return variants_list
 
 

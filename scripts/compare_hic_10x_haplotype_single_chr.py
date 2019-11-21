@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import numpy as np
 import sys
@@ -79,7 +81,7 @@ def link_10x_blocks(link_dict,hap_dict,ref_base_dict,alt_base_dict,block_dict):
                 delta_p = abs(pos2-pos1)
                 link_hap1 = 1 if base1 == rbase1 else -1;
                 link_hap2 = 1 if base2 == rbase2 else -1;
-                print "p1",pos1,block1,rbase1,vbase1,"p2",pos2,block2,rbase2,vbase2,"\t10xhap\t",hap1,hap2,"\tlink\t",base1,base2,link_hap1,link_hap2,"\t",depth_links,delta_p
+                print("p1",pos1,block1,rbase1,vbase1,"p2",pos2,block2,rbase2,vbase2,"\t10xhap\t",hap1,hap2,"\tlink\t",base1,base2,link_hap1,link_hap2,"\t",depth_links,delta_p)
                 lphase = depth_links if link_hap1*hap1 == link_hap2*hap2 else -depth_links;
                 if block1 in block_phase:
                     if block2 in block_phase[block1]:
@@ -125,7 +127,7 @@ for block1 in block_phase:
         index2 = block_phase_list.index(block2)
         #print block1,block2,index1,index2,sum(block_phase[block1][block2]),len(block_phase[block1][block2])
         if index1 == index2:
-            print "intra block: ",index1,sum(block_phase[block1][block2])
+            print("intra block: ",index1,sum(block_phase[block1][block2]))
         block_matrix[index1][index2] = sum(block_phase[block1][block2])
 
 

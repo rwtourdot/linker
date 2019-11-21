@@ -42,6 +42,15 @@ make install
 cd ../..
 ```
 
+Installing python dependencies and scripts:
+
+```
+cd <root of linker>
+virtualenv -p python3 env
+source env/bin/activate
+./setup.py [develop|install]
+```
+
 Description
 -----------
 Linker is a suite of c++ tools useful for interpreting long and linked read sequencing of cancer genomes.  The most significant information long read sequencing provides is the local haplotype of a sample.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygosity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells genomic evolution.
@@ -80,7 +89,7 @@ This command extracts all long and linked read phasing information from an align
 ```
   * Output is a graph file: graph_variant_{}.dat
 
-The output of this command is a graph_variant file which lists all of the unique hashes associated with each het site base.  This file can be concatenated with other graph_variant files, to combine all phasing information from multiple technologies.  
+The output of this command is a graph_variant file which lists all of the unique hashes associated with each het site base.  This file can be concatenated with other graph_variant files, to combine all phasing information from multiple technologies.
 
 #### Solve For Germline Haplotype from Long Read Links
 
