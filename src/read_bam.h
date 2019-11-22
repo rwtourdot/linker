@@ -10,6 +10,7 @@
 #include <map>
 #include <unordered_map>
 #include <algorithm>
+#include <cmath>
 using namespace std;
 
 //////////////// linker include ////////////////
