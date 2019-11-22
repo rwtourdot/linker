@@ -1,4 +1,4 @@
-## Linker - Tools for Analyzing Long and Linked read Sequencing
+## Linker - Tools for Analyzing Long and Linked Read Sequencing
 
 Table of Contents
 =================
@@ -16,7 +16,7 @@ This code requires bamtools, htslib, c++11, and zlib libraries.
   * htslib: https://github.com/samtools/htslib
   * bamtools: https://github.com/pezmaster31/bamtools
 
-From the linker directory:
+From the linker directory run build.sh or install manually:
 
 Installing htslib locally
 ```
@@ -42,6 +42,11 @@ make install
 cd ../..
 ```
 
+Make an empty output directory if not present
+```
+mkdir ./output
+```
+
 Description
 -----------
 Linker is a suite of c++ tools useful for interpreting long and linked read sequencing of cancer genomes.  The most significant information long read sequencing provides is the local haplotype of a sample.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygosity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells genomic evolution.
@@ -57,7 +62,7 @@ Commands
 ```
 ./linker -h
 ```
-
+<!--
 #### Flags
   * -i: /path/to/input/bamfile
   * -v: /path/to/input/vcffile
@@ -70,6 +75,7 @@ Commands
   * -s: (optional) second bam file /path/to/second/bamfile
   * -n: (optional) id string for output files
   * -b: (optional) binsize (default is 10kb - 10000)
+-->
 
 #### Extract Phasing Information from Long and Linked Reads
 
@@ -103,6 +109,18 @@ This command takes a haplotype solution file and combines it with hic phasing in
   * Output is a haplotype scaffold file: hap_full_scaffold_{}.dat
 
 The hap_full_scaffold file contains less heterozygous sites than the haplotype solution file but is accurate over the full length of the chromosome.
+
+#### Recover and Phase Variants to a Haplotype Scaffold
+
+This command takes a haplotype scaffold file and phases all variants in a graph file to that scaffold.  This is useful since some small haplotype blocks and their variants are lost when generating a haplotype scaffold.  Though this command was built to recover variants, it can also be used to phase somatic variants to the germline haplotype - given a corresponding graph file.
+
+```
+./linker recover -i ./hap_full_scaffold_{}_chr21.dat -g ./graph_variant_{}_chr21.dat -e tech -c chr21 -n sample_name
+```
+  * Output is a recovered haplotype file: hap_recovered_{}.dat
+
+The recovered haplotype file is similar to the scaffold file but its additional columns explicitly count the number of links connecting the reference/variant base to haplotype A/B.
+
 
 <!--
 #### Phase Germline Haplotypes from Long and Linked Reads
