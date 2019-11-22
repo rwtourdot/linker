@@ -21,6 +21,8 @@ LHTS=-lhts
 LZLIB=-lz
 LCURL=-lcurl
 LIBRARIES=$(LHTS) $(LZLIB) $(LBAMTOOLS) $(LCURL)
+
+
 #CCPLUS=$(CC) $(LFLAGS) $(CFLAGS)
 
 SRCDIR:=src

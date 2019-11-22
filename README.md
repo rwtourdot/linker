@@ -42,6 +42,14 @@ make install
 cd ../..
 ```
 
+Installing python dependencies and scripts:
+```
+cd <root of linker>
+virtualenv -p python3 env
+source env/bin/activate
+./setup.py [develop|install]
+```
+
 Make an empty output directory if not present
 ```
 mkdir ./output
@@ -86,7 +94,7 @@ This command extracts all long and linked read phasing information from an align
 ```
   * Output is a graph file: graph_variant_{}.dat
 
-The output of this command is a graph_variant file which lists all of the unique hashes associated with each het site base.  This file can be concatenated with other graph_variant files, to combine all phasing information from multiple technologies.  
+The output of this command is a graph_variant file which lists all of the unique hashes associated with each het site base.  This file can be concatenated with other graph_variant files, to combine all phasing information from multiple technologies.
 
 #### Solve For Germline Haplotype from Long Read Links
 

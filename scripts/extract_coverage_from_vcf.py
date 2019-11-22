@@ -1,4 +1,5 @@
-#!/usr/local/lib/python2.7
+#!/usr/bin/env python3
+
 import pysam
 import sys
 import gzip
@@ -30,7 +31,7 @@ sname2 = sname
 def construct_cov_file(vcf_file_path,chr_choice,start,end,sample_name,cfile):
 	f = open(cfile,'w')
 	base_order = ['I',"D","G","C","A","T"]
-	vcffile = vcf.Reader(open(vcf_file_path,"r")) 
+	vcffile = vcf.Reader(open(vcf_file_path,"r"))
 	for rec in vcffile.fetch(chr_choice,start,end):
 		#record = rec.genotype(sample_name)
 		record = rec.samples[1]
