@@ -4,7 +4,7 @@
 static const char *LINKER_USAGE_MESSAGE =
 "############### running linker ############### \n"
 "Program: Linker \n"
-"Version: 4.2 \n"
+"Version: 0.42 \n"
 "Usage: linker <command> [options]\n\n"
 "Commands:\n"
 "\textract\t\textract links \n"
