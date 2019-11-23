@@ -15,7 +15,7 @@ binsize <- 10000  #100000  #10000
 
 #############################################################
 hap_full_file <- "./../example_data/hap_full_scaffold_nov10_RPE1_22_"
-het_file <- "./../example_data/het_coverage_jan3_RPE1_tenx_"
+het_file <- "./../example_data/het_coverage_jan3_RPE1_illumina_"
 
 #############################################################
 file_string <- paste(hap_full_file,chromosome,".dat",sep="")
@@ -45,7 +45,7 @@ binned_gather$hap = factor(binned_gather$hap, levels=c('U','A','B'))   # levels=
 
 #############################################################
 chromosome1_max = max(binned$max_pos)
-ylimits <- c(0,80)   #c(0,50)  #c(0,180)
+ylimits <- c(0,30)   #c(0,50)  #c(0,180)
 xlimits <- c(0,chromosome1_max)
 
 xlab <- c( 0, 30, 60, 90, 120, 150, 180, 210, 240)
