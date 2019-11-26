@@ -103,7 +103,7 @@ This command extracts all long and linked read phasing information from an align
 The output of this command is a graph_variant file which lists all of the unique hashes associated with each het site base.  This file can be concatenated with other graph_variant files, to combine all phasing information from multiple technologies.
 
 
-**Solve For Germline Haplotype from Long Read Links**
+**Solve For Local Haplotype Blocks from Long Read Links**
 
 After extracting all phasing information into graph_variant files and combining or trimming certain hashes the samples haplotype can be solved for by:
 
