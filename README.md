@@ -25,8 +25,7 @@ cd htslib
 autoheader
 autoconf
 ./configure --prefix=/path/to/linker/packages/htslib/
-make
-make install
+make; make install
 cd ..
 ```
 
@@ -34,11 +33,9 @@ Installing bamtools locally
 ```
 git clone git://github.com/pezmaster31/bamtools.git
 cd bamtools
-mkdir build
-cd build
+mkdir build; cd build
 cmake -DCMAKE_INSTALL_PREFIX=/path/to/linker/packages/bamtools/ ..
-make
-make install
+make; make install
 cd ../..
 ```
 
@@ -68,7 +65,7 @@ This program was used to determine Whole Chromosome Haplotypes as detailed here:
 Associated plotting scripts found in **/R_plots** can be used to determine block energy cutoffs, assess haplotype accuracy, and plot haplotype specific copy number.
 
 <p align="center">
-<img src="https://github.com/rwtourdot/linker/blob/master/plot_output.png" width=500/>
+<img src="https://github.com/rwtourdot/linker/blob/master/plot_output.png" width=600/>
 </p>
 
 Commands
@@ -228,7 +225,7 @@ In order refine variant calls it can be useful to use allele fraction from a nor
 Input/Output
 --------
 
-#### Required Files
+##### Required Files
 
 **.bam file**
 
@@ -247,7 +244,7 @@ RAindex	chr1	pos1	str1	chr2	pos2	str2	TotalCount
 20  chr1	1651206	-1	chr1	1717357	1	3
 ```
 
-#### Generated Files
+##### Generated Files
 
 **graph_variant file**
 
