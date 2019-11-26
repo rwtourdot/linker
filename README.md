@@ -1,7 +1,8 @@
-## Linker - Tools for Analyzing Long and Linked Read Sequencing
+Linker - Tools for Analyzing Long and Linked Read Sequencing
+=================
 
 Table of Contents
-=================
+------------
 
   * [Installation](#gh-md-toc)
   * [Description](#description)
