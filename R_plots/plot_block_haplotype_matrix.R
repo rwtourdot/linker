@@ -21,6 +21,7 @@ bmatrix_data <- bmatrix_data %>% mutate(sign_phasedij = sign(phasedij))
 p1 <- ggplot(bmatrix_data, aes(x = i, y = j)) +
   geom_tile(aes(fill=sign_phasedij)) +
   scale_fill_gradientn(colours=c("blue","gray80","red"), limits=c(-1,1)) +
-  theme_classic()
+  labs(fill = "sign(Mij)") +
+  theme_classic() 
 
 p1

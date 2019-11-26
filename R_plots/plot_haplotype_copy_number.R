@@ -41,24 +41,29 @@ jdata <- drop_na(jdata)
 binned <- jdata %>% group_by(bin) %>% dplyr::summarise(A = mean(hapA_cov), B = mean(hapB_cov), U = mean(tot_cov), n=n(),min_pos = min(pos),max_pos = max(pos))
 binned <- binned %>% mutate(middle_pos = ((min_pos + max_pos)/2.0)) %>% filter(n>5)
 binned_gather <- binned %>% gather(A,B,U,key = "hap",value = "cov")
+binned_gather <- binned_gather %>% mutate(copy_number = cov/5.5)
 binned_gather$hap = factor(binned_gather$hap, levels=c('U','A','B'))   # levels=c('A','B','U')
 
 #############################################################
 chromosome1_max = max(binned$max_pos)
-ylimits <- c(0,30)   #c(0,50)  #c(0,180)
+ylimits <- c(0,3.5)   #c(0,50)  #c(0,180)
 xlimits <- c(0,chromosome1_max)
 
-xlab <- c( 0, 30, 60, 90, 120, 150, 180, 210, 240)
+#xlab <- c( 0, 30, 60, 90, 120, 150, 180, 210, 240)
+xlab <- c( 0, 10, 20, 30, 40)
 
 #############################################################
-p1 <- ggplot(data=binned_gather) + geom_point(aes(x = middle_pos,y = cov,color = hap),size=0.5) +
+p1 <- ggplot(data=binned_gather) + geom_point(aes(x = middle_pos,y = copy_number,color = hap),size=0.5) +
   scale_color_manual(values=c("grey35", "firebrick2", "dodgerblue3")) +
-  facet_grid(.~hap) +
+  #facet_grid(.~hap) +
+  facet_grid(hap~.) +
   scale_y_continuous(limits = ylimits,expand = c(0.0,0.0)) +
   scale_x_continuous(limits = xlimits,labels = paste0(xlab, "Mb"),breaks = 10^6*xlab,expand = c(0.0,0.0)) +
-  theme_classic() +
   xlab(chromosome) +
-  theme(panel.spacing = unit(1, "lines"),legend.position = "none",axis.text.x = element_text(angle = 90))
+  ylab("Copy Number") +
+  theme_classic() +
+  theme(panel.spacing = unit(1, "lines"),legend.position = "none",axis.text.x = element_text(angle = 90),panel.grid.major = element_line(colour="grey", size=0.5))
+
 
 p1
 
