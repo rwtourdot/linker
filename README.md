@@ -229,11 +229,11 @@ Input/Output
 
 **.bam file**
 
-The bam file can originate from Illumina or another type of sequencing. The alignment method will depend on the type of sequencing, but a consistent genome reference should be used between samples.
+The .bam file can originate from Long Read or Linked Read sequencing. The alignment method will depend on the type of sequencing, but a consistent genome reference should be used between samples.
 
 **.vcf file**
 
-The vcf file can be obtained with GATK (https://software.broadinstitute.org/gatk/) or another variant caller and should contain all germline and somatic SNPs.  Indels will not be considered in linkers phasing methods.  Variants should be called on the same reference as the long or linked read .bam file
+The .vcf file can be obtained with GATK (https://software.broadinstitute.org/gatk/) or another variant caller and should contain all heterozygous sites.  Indels will not be considered in linkers phasing methods, and SNP's called in centromere and variable regions of the genome should be removed.  .vcf files should have the same reference as the long or linked read .bam file
 
 <!--
 **SV file**
@@ -250,7 +250,7 @@ RAindex	chr1	pos1	str1	chr2	pos2	str2	TotalCount
 
 **graph_variant file**
 
-A file which extracts all phasing information from a bamfile.
+A file which extracts all phasing information in a .bam file.  These files can be concatenated given the same sample and chromosome.
 ```
 variant_id  chrom position  tech_hash readname
 46692825_C_C	chr21	46692825	GATAACCGTACTGCTA-1	HMVT3CCXX:6:2107:9790:22739
@@ -258,7 +258,7 @@ variant_id  chrom position  tech_hash readname
 
 **hap_solution file**
 
-A file that contain all haplotype blocks solved for from the graph_variant file.  The **haplotype** column defines each het sites local haplotype in a block defined by **blockE**.
+A file that contain all haplotype blocks solved for from a graph_variant file.  The **haplotype** column defines each het sites local haplotype in a block defined by **blockE**.
 ```
 index position  reference_id  alternate_id  haplotype ref_count alt_count spinE blockE  default_block range
 0	13000241	chr21_13000241_A_A	chr21_13000241_A_C	1	23	30	-2083.39	-2083.39	0	27362
@@ -266,7 +266,7 @@ index position  reference_id  alternate_id  haplotype ref_count alt_count spinE 
 
 **scaffold file**
 
-A file that contains the final haplotype accurate over the full chromosome.  The **scaffold_hap** column is a spin vector which defines the germline Haplotype of the cell.
+A file that contains the final haplotype accurate over the whole chromosome.  The **scaffold_hap** column is a spin vector which defines the germline haplotype of the sample.
 ```
 chrom arm position  reference_id  alternate_id  scaffold_hap  block_hap block spinE blockE
 chr21	q	13207111	13207111_T_T	13207111_T_C	-1	block:	1	18	tenx_energy(spin/block):	-168	-168
@@ -274,7 +274,7 @@ chr21	q	13207111	13207111_T_T	13207111_T_C	-1	block:	1	18	tenx_energy(spin/block
 
 **het_coverage file**
 
-The heterozygous site coverage file contains information on the number of each base at every heterozygous site called with the GATK.
+A file that contains base counts at each heterozygous site.
 ```
 variant_id  position  variant:reference Indel Deletion  Gbase Cbase Abase Tbase Total
 190204289_T_C	190204289	T:C	I|0	D|0	G|0	C|44	A|0	T|30	74
