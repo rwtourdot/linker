@@ -225,7 +225,7 @@ In order refine variant calls it can be useful to use allele fraction from a nor
 Input/Output
 --------
 
-##### Required Files
+### Required Files
 
 **.bam file**
 
@@ -244,7 +244,7 @@ RAindex	chr1	pos1	str1	chr2	pos2	str2	TotalCount
 20  chr1	1651206	-1	chr1	1717357	1	3
 ```
 
-##### Generated Files
+### Generated Files
 
 **graph_variant file**
 
