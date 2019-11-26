@@ -235,6 +235,7 @@ The bam file can originate from Illumina or another type of sequencing. The alig
 
 The vcf file can be obtained with GATK (https://software.broadinstitute.org/gatk/) or another variant caller and should contain all germline and somatic SNPs.  Indels will not be considered in linkers phasing methods.  Variants should be called on the same reference as the long or linked read .bam file
 
+<!--
 **SV file**
 
 There are several Structural Variant callers that work with paired end sequencing. The output of their calls may differ, linker takes structural variant input in the form below.
@@ -243,6 +244,7 @@ There are several Structural Variant callers that work with paired end sequencin
 RAindex	chr1	pos1	str1	chr2	pos2	str2	TotalCount
 20  chr1	1651206	-1	chr1	1717357	1	3
 ```
+-->
 
 ### Generated Files
 
