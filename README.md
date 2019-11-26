@@ -16,7 +16,7 @@ This code requires bamtools, htslib, c++11, and zlib libraries.
   * htslib: https://github.com/samtools/htslib
   * bamtools: https://github.com/pezmaster31/bamtools
 
-From the linker directory run build.sh or install manually:
+From the linker directory run **build.sh** or install manually:
 
 Installing htslib locally
 ```
@@ -57,16 +57,20 @@ mkdir ./output
 
 Description
 -----------
-Linker is a suite of c++ tools useful for interpreting long and linked read sequencing of cancer genomes.  The most significant information long read sequencing provides is the local haplotype of a sample.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygosity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells genomic evolution.
+Linker is a suite of C++ tools useful for interpreting long and linked read sequencing of cancer genomes.  The most significant information long read sequencing provides is the local haplotype of a sample.  In cancer cell lines where Aneuplpoidy, Loss of Heterozygosity, and Structural Variation is common, haplotypes can provide a better resolution of the samples karyotype, and clarify the cancer cells genomic evolution.
 
-Linker currently supports 10X, Pacbio, Oxford Nanopore, and HiC sequencing technologies.  A diagram of the germline haplotype phasing workflow is shown below.
+This program was used to determine full length Chromosome Haplotypes as detailed here: [biorxiv](https://www.biorxiv.org/content/10.1101/629337v1).  Linker currently supports 10X, Pacbio, Oxford Nanopore, and HiC sequencing technologies.  A diagram of the germline haplotype phasing workflow is shown below.
 
-<img src="https://github.com/rwtourdot/linker/blob/master/new_linker_flowchart.png" width=600/>
+<img src="https://github.com/rwtourdot/linker/blob/master/new_linker_flowchart.png" width=900/>
+
+Associated plotting scripts found in **/R_plots** can be used to determine block cutoffs, assess haplotype accuracy, and plot haplotype specific copy number.
+
+<img src="https://github.com/rwtourdot/linker/blob/master/plot_output.png" width=900/>
 
 Commands
 --------
 
-#### List Commands
+**List Commands**
 ```
 ./linker -h
 ```
@@ -85,7 +89,8 @@ Commands
   * -b: (optional) binsize (default is 10kb - 10000)
 -->
 
-#### Extract Phasing Information from Long and Linked Reads
+
+**Extract Phasing Information from Long and Linked Reads**
 
 This command extracts all long and linked read phasing information from an aligned bamfile given a corresponding vcf file containing heterozygous sites.  The long read technology flag (tenx,pacbio,nanopore,hic) should correspond to the bamfile chosen.
 
@@ -96,7 +101,8 @@ This command extracts all long and linked read phasing information from an align
 
 The output of this command is a graph_variant file which lists all of the unique hashes associated with each het site base.  This file can be concatenated with other graph_variant files, to combine all phasing information from multiple technologies.
 
-#### Solve For Germline Haplotype from Long Read Links
+
+**Solve For Germline Haplotype from Long Read Links**
 
 After extracting all phasing information into graph_variant files and combining or trimming certain hashes the samples haplotype can be solved for by:
 
@@ -107,7 +113,8 @@ After extracting all phasing information into graph_variant files and combining 
 
 The haplotype file contains a Block Switch Energy column which can be used to define blocks.  The lower (more negative) the block energy the more likely a heterozygous site is phased correctly. More details on defining blocks can be found in the paper.
 
-#### Generate A Whole Chromosome Haplotype Scaffold
+
+**Generate A Whole Chromosome Haplotype Scaffold**
 
 This command takes a haplotype solution file and combines it with hic phasing information in a corresponding graph_variant_hic file to generate a full chromosome haplotype scaffold.  An energy cutoff which defines haplotype blocks is specified by the -e flag.
 
@@ -118,7 +125,8 @@ This command takes a haplotype solution file and combines it with hic phasing in
 
 The hap_full_scaffold file contains less heterozygous sites than the haplotype solution file but is accurate over the full length of the chromosome.
 
-#### Recover and Phase Variants to a Haplotype Scaffold
+
+**Recover and Phase Variants to a Haplotype Scaffold**
 
 This command takes a haplotype scaffold file and phases all variants in a graph file to that scaffold.  This is useful since some small haplotype blocks and their variants are lost when generating a haplotype scaffold.  Though this command was built to recover variants, it can also be used to phase somatic variants to the germline haplotype - given a corresponding graph file.
 
@@ -129,6 +137,17 @@ This command takes a haplotype scaffold file and phases all variants in a graph 
 
 The recovered haplotype file is similar to the scaffold file but its additional columns explicitly count the number of links connecting the reference/variant base to haplotype A/B.
 
+
+**Extract Heterozygous Site Coverage**
+
+This command takes a vcf and bam file and extracts the read coverage of each base. Base counts at each heterozygous site must pass a base quality and map quality cutoff.
+
+```
+./linker coverage -i ./input.bam -v het_sites.vcf -e illumina -c chr21 -n sample_name
+```
+  * Output is heterozygous site coverage file: het_coverage.dat
+
+ More information on this file is described in the I/O section below.
 
 <!--
 #### Phase Germline Haplotypes from Long and Linked Reads
@@ -207,13 +226,13 @@ Input/Output
 
 #### Required Files
 
-##### .bam file
+**.bam file**
 The bam file can originate from Illumina or another type of sequencing. The alignment method will depend on the type of sequencing, but a consistent genome reference should be used between samples.
 
-##### .vcf file
+**.vcf file**
 The vcf file can be obtained with GATK (https://software.broadinstitute.org/gatk/) or another variant caller and should contain all germline and somatic SNPs.  Indels will not be considered in linkers phasing methods.  Variants should be called on the same reference as the long or linked read .bam file
 
-##### SV file
+**SV file**
 There are several Structural Variant callers that work with paired end sequencing. The output of their calls may differ, linker takes structural variant input in the form below.
 
 ```
@@ -223,7 +242,28 @@ RAindex	chr1	pos1	str1	chr2	pos2	str2	TotalCount
 
 #### Generated Files
 
-##### het coverage file
+**graph_variant file**
+A file which extracts all phasing information from a bamfile.
+```
+variant_id  chrom position  tech_hash readname
+46692825_C_C	chr21	46692825	GATAACCGTACTGCTA-1	HMVT3CCXX:6:2107:9790:22739
+```
+
+**hap_solution file**
+A file that contain all haplotype blocks solved for from the graph_variant file.  The **haplotype** column defines each het sites local haplotype in a block defined by **blockE**.
+```
+index position  reference_id  alternate_id  haplotype ref_count alt_count spinE blockE  default_block range
+0	13000241	chr21_13000241_A_A	chr21_13000241_A_C	1	23	30	-2083.39	-2083.39	0	27362
+```
+
+**scaffold file**
+A file that contains the final haplotype accurate over the full chromosome.  The **scaffold_hap** column is a spin vector which defines the germline Haplotype of the cell.
+```
+chrom arm position  reference_id  alternate_id  scaffold_hap  block_hap block spinE blockE
+chr21	q	13207111	13207111_T_T	13207111_T_C	-1	block:	1	18	tenx_energy(spin/block):	-168	-168
+```
+
+**het_coverage file**
 The heterozygous site coverage file contains information on the number of each base at every heterozygous site called with the GATK.
 ```
 variant_id  position  variant:reference Indel Deletion  Gbase Cbase Abase Tbase Total
