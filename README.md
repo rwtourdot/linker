@@ -1,5 +1,6 @@
-Linker - Tools for Analyzing Long and Linked Read Sequencing
-=================
+#Linker
+Tools for Analyzing Long and Linked Read Sequencing
+------------
 
 Table of Contents
 ------------
@@ -48,7 +49,7 @@ source env/bin/activate
 ./setup.py [develop|install]
 ```
 
-Make an empty output directory if not present
+Make an empty output directory if not present:
 ```
 mkdir ./output
 ```
