@@ -6,6 +6,8 @@ export PREFIX=$(pwd)
 
 mkdir -p ./htslib
 mkdir -p ./bamtools
+mkdir -p ./output
+mkdir -p ./vcf_data
 
 cd htslib
 curl -L https://github.com/samtools/htslib/archive/$HTSLIB_VER.tar.gz | tar -zx --strip-components 1
@@ -23,5 +25,3 @@ cmake -DCMAKE_INSTALL_PREFIX=$PREFIX/packages/bamtools/ ..
 make
 make install
 cd ../..
-mkdir ./output
-mkdir ./vcf_data
