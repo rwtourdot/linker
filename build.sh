@@ -4,6 +4,8 @@ export BAMTOOLS_VER=v2.5.1
 export PROG_NAME=linker
 export PREFIX=$(pwd)
 
+mkdir -p ./htslib
+mkdir -p ./bamtools
 
 cd htslib
 curl -L https://github.com/samtools/htslib/archive/$HTSLIB_VER.tar.gz | tar -zx --strip-components 1
