@@ -30,6 +30,10 @@ static const char *CN_PHASE_USAGE_MESSAGE =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_cn_phaser_options( int argc, char** argv ) {
         bool die = false;
+        if (argc < 2) {
+          std::cerr << "\n" << CN_PHASE_USAGE_MESSAGE;
+          exit(1);
+        }
         if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
                 std::cerr << "\n" << CN_PHASE_USAGE_MESSAGE;
                 exit(1);
@@ -94,9 +98,3 @@ void run_cn_phaser(int argc, char** argv) {
         //   vcf_vector vvec;
         //   vvec = load_vcf_file_coverage(opt::input_cov_file,chromosome);
         //}
-
-
-
-
-
-

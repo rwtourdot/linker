@@ -34,6 +34,10 @@ static const char *SV_USAGE_MESSAGE =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_sv_options( int argc, char** argv ) {
         bool die = false;
+        if (argc < 2) {
+          std::cerr << "\n" << SV_USAGE_MESSAGE;
+          exit(1);
+        }
         if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
                 std::cerr << "\n" << SV_USAGE_MESSAGE;
                 exit(1);
@@ -100,6 +104,3 @@ void run_sv_phaser(int argc, char** argv) {
         //      }
         //      cout << "######" << endl;
         //}
-
-
-

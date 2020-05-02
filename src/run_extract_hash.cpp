@@ -7,7 +7,7 @@ namespace opt {
         static std::string input_vcf_file = "./sample_data/BL1954_PCRFree.hets.recalibrated.vcf";
 	static std::string input_cov_file = "./output/het_coverage_default_tenx_chr20.dat";
 	static bool cov_load = false;
-	static bool vcf_load = false; 
+	static bool vcf_load = false;
         static std::string input_bam_file = "./sample_data/BL1954_10xG_chr20.bam";
         static bool multiple_bams = false;
         static std::string second_input_bam_file = "./sample_data/BL1954_10xG_chr20.bam";
@@ -15,10 +15,11 @@ namespace opt {
 	static int start_bound = 0;
 	static int end_bound = 300000000;
 	static bool region_defined = false;
+  static bool output_graph_hash = false;
 };
 
 /////////////// structures ///////////////////
-static const char* shortopts = "ho:i:v:m:c:e:s:n:";
+static const char* shortopts = "hgo:i:v:m:c:e:s:n:";
 static const struct option longopts[] = {
 	{ "help",        no_argument, NULL, 'h' },
         { "vcf-file",    no_argument, NULL, 'v' },
@@ -27,7 +28,8 @@ static const struct option longopts[] = {
         { "technology",  no_argument, NULL, 'e' },
         { "chr-choice",  no_argument, NULL, 'c' },
         { "bam-file2",   no_argument, NULL, 's' },
-        { "id_string",   no_argument, NULL, 'n' }
+        { "id_string",   no_argument, NULL, 'n' },
+        { "output_graph_hash",   no_argument, NULL, 'g' }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,6 +44,7 @@ static const char *EXTRACT_USAGE_MESSAGE =
 "  -c,      chromosome name ( chr4 ) or contig name depending on bam \n"
 "  -s,      second bam file path \n"
 "  -n,      id string for output files \n"
+"  -g,      flag to output graph_hash file (default no) \n"
 "\n";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,18 +67,22 @@ static void parse_region_string( std::string samtools_region ) {
 				opt::chr_choice = cid;
 				opt::start_bound = start_int;
 				opt::end_bound = end_int;
-				opt::region_defined = true;	
+				opt::region_defined = true;
 			}
 			else { std::cerr << " region string problem  \n" << EXTRACT_USAGE_MESSAGE; exit(1); }
 		}
 		else { std::cerr << " region string problem  \n" << EXTRACT_USAGE_MESSAGE; exit(1); }
-	}	
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_extract_hash_options( int argc, char** argv ) {
 	bool die = false; //bool vcf_load = false; //bool cov_load = false;
 	//if(argc <= 2) { die = true; }
+  if (argc < 2) {
+    std::cerr << "\n" << EXTRACT_USAGE_MESSAGE;
+    exit(1);
+  }
 	if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
 		std::cerr << "\n" << EXTRACT_USAGE_MESSAGE;
 		exit(1);
@@ -91,6 +98,7 @@ static void parse_extract_hash_options( int argc, char** argv ) {
                 case 'c': arg >> opt::chr_choice; break;
                 case 's': opt::multiple_bams = true; arg >> opt::second_input_bam_file; break;
                 case 'n': arg >> opt::id_string; break;
+                case 'g': opt::output_graph_hash = true; break;
                 }
         }
 	//if (opt::input_bam_file.length() == 0) { die = true; }
@@ -106,6 +114,7 @@ static void parse_extract_hash_options( int argc, char** argv ) {
         cout << "== chromosome === " << opt::chr_choice << endl;
         cout << "== technology === " << opt::technology << endl;
         cout << "== input bam  === " << opt::input_bam_file << endl;
+        cout << "== output graph hash  === " << opt::output_graph_hash << endl;
         if(opt::vcf_load) { cout << "== input vcf  === " << opt::input_vcf_file << endl; }
         if(opt::cov_load) { cout << "== input cov  === " << opt::input_cov_file << endl; }
         cout << "== id string  === " << opt::id_string << endl;
@@ -125,7 +134,7 @@ void run_extract_hash( int argc, char** argv ) {
         std::string output_hash_file = "./output/graph_hash_" + opt::id_string + "_" + opt::technology + "_" + opt::chr_choice + ".dat";
         //std::string hapsolutionFile = "./output/hap_solution_" + opt::id_string  + "_" + opt::technology + "_" + opt::chr_choice + ".dat";
         cout << "- output variant link file: " << output_link_file << endl;
-        cout << "- output hash link file: " << output_hash_file << endl;
+        if (opt::output_graph_hash) { cout << "- output hash link file: " << output_hash_file << endl; }
         cout << endl;
         std::map<std::string,int> chr_str_map;
         coord_dictionary pdict;
@@ -134,14 +143,13 @@ void run_extract_hash( int argc, char** argv ) {
         variant_graph vgraph;
         contig_name_map(opt::input_bam_file,chr_str_map);
         int chromosome = chr_str_map[opt::chr_choice];
-	bool paired;
         //#################### start of code ##########################
 	//if (opt::filter) { };  // vvec = read_het_coverage( opt::input_cov_file, vgraph );
         //vvec = load_and_filter_vcf_file(opt::input_vcf_file,chromosome,opt::chr_choice,hetfilterFile);
 	if (opt::cov_load) { vvec = read_het_coverage_vvec( opt::input_cov_file, chromosome ); }
         else { vvec = load_vcf_file( opt::input_vcf_file, chromosome ); }
-	if (opt::region_defined) { 
-		subset_het_sites( vvec, opt::start_bound, opt::end_bound ); 
+	if (opt::region_defined) {
+		subset_het_sites( vvec, opt::start_bound, opt::end_bound );
 	}
         if (opt::technology == "pacbio" || opt::technology == "tenx" || opt::technology == "illumina" || opt::technology == "nanopore" || opt::technology == "hic") {
                 connect_up_variants_bam_pileup(vvec,opt::input_bam_file,chromosome,vgraph,rgraph,opt::technology);
@@ -149,36 +157,7 @@ void run_extract_hash( int argc, char** argv ) {
         }
         else { cout << "error: not a valid technology choice [pacbio,tenx,illumina,nanopore,hic] " << endl; return; }
         write_variant_link_list(vgraph,rgraph,output_link_file,opt::chr_choice);
-        write_hash_link_list(vgraph,rgraph,output_hash_file,opt::chr_choice);
+        if (opt::output_graph_hash) { write_hash_link_list(vgraph,rgraph,output_hash_file,opt::chr_choice); }
 	////////
         return;
 };
-
-
-
-
-
-
-
-        ////////
-        //link_hashes(vgraph,rgraph);
-        //prune_graph(vgraph);
-        //initialize_pdict(vgraph,pdict,paired);
-        //if (opt::technology == "tenx") {
-        //      std::string bxlinksFile = "./output/bx_links_" + opt::id_string + "_" + opt::chr_choice + ".dat";
-        //      write_bx_links(rgraph,bxlinksFile);
-        //}
-        //write_link_network(vgraph,output_network_file,opt::chr_choice);
-        //static const std::size_t length = pdict.num_paired;
-        ///////////// create global datastructures for haplotype solver
-        //map_matrix<int> num_matrix_second(length);
-        //map_matrix<double> diff_matrix(length);
-        //initialize_solver(vgraph,pdict,diff_matrix,num_matrix_second);
-        //solver_recursive(vgraph,pdict,diff_matrix,num_matrix_second);
-        //solver(vgraph,pdict,diff_matrix,num_matrix_second);
-        ///////////// write haplotype output
-        //cout << " solver finished " << endl;
-        //call_blocks(pdict,opt::technology);
-        //cout << " called haplotype blocks " << endl;
-        //write_hap_solution(vgraph,hapsolutionFile,pdict,opt::chr_choice);
-

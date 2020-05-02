@@ -5,7 +5,7 @@ namespace opt {
         static std::string chr_choice = "chr20";
         static std::string technology = "tenx";
         static std::string input_vcf_file = "./sample_data/BL1954_PCRFree.hets.recalibrated.vcf";
-        static std::string input_bam_file = "./sample_data/BL1954_10xG_chr20.bam"; 
+        static std::string input_bam_file = "./sample_data/BL1954_10xG_chr20.bam";
         static bool multiple_bams = false;
         static std::string second_input_bam_file = "./sample_data/BL1954_10xG_chr20.bam";
         static std::string id_string = "default";
@@ -37,6 +37,10 @@ static const char *COVERAGE_USAGE_MESSAGE =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_het_coverage_options( int argc, char** argv ) {
         bool die = false;
+        if (argc < 2) {
+          std::cerr << "\n" << COVERAGE_USAGE_MESSAGE;
+          exit(1);
+        }
         if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
                 std::cerr << "\n" << COVERAGE_USAGE_MESSAGE;
                 exit(1);
@@ -89,9 +93,9 @@ void run_het_coverage(int argc, char** argv) {
                 if(opt::multiple_bams) { connect_up_variants_bam_pileup(vvec,opt::second_input_bam_file,chromosome,vgraph,rgraph,opt::technology); }
         }
         else { cout << "error: not a valid technology choice [pacbio,tenx,illumina,nanopore,hic] " << endl; return; }
-	if (opt::technology == "tenx") { 
+	if (opt::technology == "tenx") {
 		calc_coverage_unique_hash(vgraph);
-		write_het_bx_coverage(vgraph,coverageFile,opt::chr_choice); 
+		write_het_bx_coverage(vgraph,coverageFile,opt::chr_choice);
 	}
 	else { write_het_coverage(vgraph,coverageFile,opt::chr_choice); }
         return;

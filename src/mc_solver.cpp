@@ -2,91 +2,76 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void solver( std::unordered_map<std::string,variant_node>& var_dict, coord_dictionary& pdict, map_matrix<double> diff_matrix, map_matrix<int> num_matrix_second ) {
-	int t = clock();
-        static const std::size_t length = pdict.num_paired;
-        map_matrix<int> num_matrix_third(length);
-        cout << "========" << endl;
-        cout << "monte carlo solver: " << endl;
-        length_cutoff_nmatrix( pdict, diff_matrix, num_matrix_second, num_matrix_third );
-        vector<bool> flip_maxima(length); 
+	float t = clock();
+	static const std::size_t length = pdict.num_paired;
+	map_matrix<int> num_matrix_third(length);
+	cout << "========" << endl;
+	cout << "monte carlo solver: " << endl;
+	length_cutoff_nmatrix( pdict, diff_matrix, num_matrix_second, num_matrix_third );
+	vector<bool> flip_maxima(length);
 	for (int j = 0; j < pdict.num_paired; j++) { flip_maxima[j] = true; }
-        for (int i = 0; i < solver_loops; i++) {
-                cout << "******************* solver loop     " << i << endl;
-                t = clock();
-                single_spin_flip_map( pdict, diff_matrix, num_matrix_third );  // num_matrix_second
-                if (i > 0) { get_flip_positions( pdict, flip_maxima ); }
-                t = clock() - t;
-                cout << "spin flip --------- time: " << t << endl;
-                t = clock();
-                cout << "-- finished flip spins     " << endl;
-                block_flip_map( pdict, diff_matrix, num_matrix_third, flip_maxima );  // num_matrix_second
-                t = clock() - t;
-                cout << "block flip -------- time: " << t << endl;
-                t = clock();
-                cout << "-- finished block flip     " << endl;
-                energy_sum_min_max( pdict );
-        }
-        set_switch_energy( pdict, flip_maxima );   /// create a new haplotype block class and find the segments
+	for (int i = 0; i < solver_loops; i++) {
+		cout << "******************* solver loop     " << i << endl;
+		t = clock();
+		single_spin_flip_map( pdict, diff_matrix, num_matrix_third );  // num_matrix_second
+		if (i > 0) { get_flip_positions( pdict, flip_maxima ); }
+		t = float(clock() - t)/ CLOCKS_PER_SEC;
+		cout << "spin flip --------- time: " << t << endl;
+		t = clock();
+		cout << "-- finished flip spins     " << endl;
+		block_flip_map( pdict, diff_matrix, num_matrix_third, flip_maxima );  // num_matrix_second
+		t = float(clock() - t)/ CLOCKS_PER_SEC;
+		cout << "block flip -------- time: " << t << endl;
+		cout << "-- finished block flip     " << endl;
+		energy_sum_min_max( pdict );
+	}
+	set_switch_energy( pdict, flip_maxima );   /// create a new haplotype block class and find the segments
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void solver_recursive( std::unordered_map<std::string,variant_node>& var_dict, coord_dictionary& pdict, map_matrix<double> diff_matrix, map_matrix<int> num_matrix_second ) {
-        int t = clock();
+	float t = clock();
 	static const std::size_t length = pdict.num_paired;
 	map_matrix<int> num_matrix_third(length);
-        cout << "========" << endl;
-        cout << "monte carlo solver: " << endl;
+	cout << "========" << endl;
+	cout << "monte carlo solver: " << endl;
 	length_cutoff_nmatrix( pdict, diff_matrix, num_matrix_second, num_matrix_third );
-        //vector<bool> flip_maxima(pdict.num_paired);
-        //for (int j = 0; j < pdict.num_paired; j++) { flip_maxima[j] = true; }
-        for (int i = 0; i < solver_loops; i++) {
-                cout << "******************* solver loop     " << i << endl;
-                t = clock();
+	for (int i = 0; i < solver_loops; i++) {
+		cout << "******************* solver loop     " << i << endl;
+		t = clock();
 		single_spin_flip_recursive( pdict, diff_matrix, num_matrix_third );
-                t = clock() - t;
-                cout << "spin flip --------- time: " << t << endl;
-                t = clock();
+		t = float(clock() - t)/ CLOCKS_PER_SEC;
+		cout << "spin flip --------- time: " << t << endl;
+		t = clock();
 		block_flip_recursive( pdict, diff_matrix, num_matrix_third );
-                t = clock() - t;
-                cout << "block flip -------- time: " << t << endl;
-                energy_sum_min_max( pdict );
-        }
-        //set_switch_energy(pdict,flip_maxima);   /// create a new haplotype block class and find the segments
+		t = float(clock() - t)/ CLOCKS_PER_SEC;
+		cout << "block flip -------- time: " << t << endl;
+		energy_sum_min_max( pdict );
+	}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void solver_recursive_hic( block_dictionary& bdict, std::vector<int> hic_limit_loop, map_matrix<int> block_matrix ) {
-        int t = clock();
-        //static const std::size_t length = pdict.num_paired;
-        //map_matrix<int> num_matrix_third(length);
-        cout << "========" << endl;
-        cout << "monte carlo solver:" << endl;
-        //length_cutoff_nmatrix( pdict, diff_matrix, num_matrix_second, num_matrix_third );
-        //vector<bool> flip_maxima(pdict.num_paired);
-        //vector<int> block_deltaE(length_subset);
-        //for (int j = 0; j < pdict.num_paired; j++) { flip_maxima[j] = true; }
-        //block_phasing_quick_flip( bdict );
-	//
-	vector<int> graph_flip_list;
-	//block_phasing_quick_flip( bdict, graph_flip_list );
+	float t = clock();
+	cout << "========" << endl;
+	cout << "monte carlo solver:" << endl;
 	for( int k = 0; k < hic_limit_loop.size(); k++ ) {
 		int hlimit = hic_limit_loop[k];
 		bdict.scale_matrix( hlimit, block_matrix );
-        	for (int i = 0; i < solver_loops_hic; i++) {
-                	cout << "******************* solver_loop" << "\t" << i << "\tscale_loop\t" << hlimit << endl;
-                	t = clock();
-                	single_spin_flip_recursive_hic( bdict );
-        		//block_phasing_quick_flip( bdict, graph_flip_list );
-                	t = clock() - t;
-                	cout << "spin flip --------- time: " << t << endl;
-                	t = clock();
+		for (int i = 0; i < solver_loops_hic; i++) {
+			cout << "******************* solver_loop" << "\t" << i << "\tscale_loop\t" << hlimit << endl;
+			t = clock();
+			single_spin_flip_recursive_hic( bdict );
+			//block_phasing_quick_flip( bdict, graph_flip_list );
+			t = float(clock() - t)/ CLOCKS_PER_SEC;
+			cout << "spin flip --------- time: " << t << endl;
+			t = clock();
 			block_flip_brute_force_hic( bdict );  //block_flip_recursive_hic( bdict );
-                	t = clock() - t;
-                	cout << "block flip -------- time: " << t << endl;
-                	energy_sum_min_max_hic( bdict );
-        	} 
+			t = float( clock() - t )/ CLOCKS_PER_SEC;
+			cout << "block flip -------- time: " << t << endl;
+			energy_sum_min_max_hic( bdict );
+		}
 	}
-        //set_switch_energy(pdict,flip_maxima);   /// create a new haplotype block class and find the segments
 };
 
 static void block_phasing_quick_flip( block_dictionary& bdict, vector<int>& graph_flip_list ) {
@@ -98,20 +83,20 @@ static void block_phasing_quick_flip( block_dictionary& bdict, vector<int>& grap
 		for ( auto const &ent1 : bdict.subset_matrix.mat[l] ) {
 			auto const &m = ent1.first;
 			if ( bdict.subset_matrix(l,m) != 0 & l != m ) {
-			int lm_energy = loop_haplotype[l]*loop_haplotype[m]*bdict.subset_matrix(l,m);	
+			int lm_energy = loop_haplotype[l]*loop_haplotype[m]*bdict.subset_matrix(l,m);
 			for ( auto const &ent2 : bdict.subset_matrix.mat[m] ) {
 				auto const &p = ent2.first;
 				if ( bdict.subset_matrix(l,p) != 0 & l != p & m != p ) {
 				int lp_energy = loop_haplotype[l]*loop_haplotype[p]*bdict.subset_matrix(l,p);
 				int correlation = lm_energy*lp_energy;
-				//cout << correlation << endl;	
+				//cout << correlation << endl;
 				if ( correlation > 0 ) {
 					//cout << l << "\t" << m << "\t" << p << "\t" << correlation << endl;
 					correlation_graph[m][p] += 1;
 					correlation_graph[p][m] += 1; //.push_back(m);
 					if (correlation_graph[m][p] > 30) {  //2-
-						high_correlation_graph[m][p] += 1;	
-						high_correlation_graph[p][m] += 1;	
+						high_correlation_graph[m][p] += 1;
+						high_correlation_graph[p][m] += 1;
 					}
 				} }
 			} }
@@ -127,27 +112,27 @@ static void block_phasing_quick_flip( block_dictionary& bdict, vector<int>& grap
         		traverse_graph( high_correlation_graph, traverse_list, l, bdict.length_subset );
 			cout << "start " << l << endl;
 			for (int l = 0; l < traverse_list.size(); l++) {
-				cout << traverse_list[l] << " ";			
+				cout << traverse_list[l] << " ";
 				covered_list.push_back(traverse_list[l]);
 			}
 			cout << endl;
-		}	
+		}
 	}
 
 	for (int l = 0; l < traverse_list.size(); l++) {
-		cout << traverse_list[l] << " "; 
-		bdict.subset_haplotype[l] = loop_haplotype[l]*-1;	
+		cout << traverse_list[l] << " ";
+		bdict.subset_haplotype[l] = loop_haplotype[l]*-1;
 	}
 	cout << endl;
 	graph_flip_list = traverse_list;
 }
 
 static void traverse_graph( std::unordered_map<int,std::unordered_map<int,int>> high_correlation_graph, vector<int>& traverse_list, int start_node, int subset_length ) {
-	traverse_list.clear(); 
+	traverse_list.clear();
         bool *visited = new bool[subset_length];
         for(int i = 0; i < subset_length; i++) { visited[i] = false; }
         // Create a queue for BFS
-        int s = start_node; 
+        int s = start_node;
 	visited[s] = true;
         std::list<int> queue;
         queue.push_back(s);
@@ -207,7 +192,7 @@ static void get_flip_positions( coord_dictionary& pdict, vector<bool>& flip_maxi
 		if ( energy < -200 ) {
                 for (int j=0; j < neighbors.size(); j++) {   //cout << neighbors[j] << "  ";
                         if ( neighbors[j] >= 0 && neighbors[j] < pdict.num_paired ) {
-				if ( pdict.deltaE[neighbors[j]] > energy ) { check = false; } 
+				if ( pdict.deltaE[neighbors[j]] > energy ) { check = false; }
 			}
                 } }
                 flip_maxima[i] = check;
@@ -440,7 +425,7 @@ static void block_flip_brute_force_hic( block_dictionary& bdict ) {
         for (int i = 0; i < bdict.length_subset; i++) {
                 vector<int> switch_haplotype = loop_haplotype;
                 for (int j = 0; j < i+1; j++) { switch_haplotype[j] = loop_haplotype[j]*(-1); }
-                double spin_i_energy = 0.0;  
+                double spin_i_energy = 0.0;
 		double spin_f_energy = 0.0;
 		for (int l = 0; l < bdict.length_subset; l++) {
                 	for (auto const &ent1 : bdict.distance_matrix.mat[l]) {
@@ -459,7 +444,7 @@ static void block_flip_brute_force_hic( block_dictionary& bdict ) {
                         nbf++;
                 }
 		if ( flipped == true ) { bdict.subset_switchE[i] = switch_energy; }
-		else { bdict.subset_switchE[i] = (-1.0)*switch_energy; } 
+		else { bdict.subset_switchE[i] = (-1.0)*switch_energy; }
         }
         bdict.subset_haplotype = loop_haplotype;
         cout << "-- number of block flips: " << nbf << endl;
@@ -487,16 +472,3 @@ static vector<double> dot_product_matrix( vector<int> a, std::vector< std::vecto
         }
         return dot_vector;
 };
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-//static void energy_sum_min_max( coord_dictionary& pdict ) {
-//        double sum = 0.0; double max = 0.0; double min = 0.0;
-//        for (int i = 0; i < pdict.num_paired; i++) {
-//                sum += pdict.deltaE[i];
-//                if (pdict.deltaE[i] > max) { max = pdict.deltaE[i]; }
-//                if (pdict.deltaE[i] < min) { min = pdict.deltaE[i]; }
-//        }
-//        cout << "-- energy sum: " << sum << " minimum: " << min << " maximum: " << max << endl;
-//};
-

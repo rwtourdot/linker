@@ -38,14 +38,17 @@ static const char *SCAFFOLD_USAGE_MESSAGE =
 "  -i,      input haplotype solution file path \n"
 "  -g,      input hic graph file \n"
 "  -c,      chromosome name ( chr4 ) or contig name depending on bam \n"
-"  -e,      tenx blockE cutoff (-2000) \n"
+"  -e,      tenx blockE cutoff (-700) \n"
 "  -n,      id string for output files \n"
 "\n";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_scaffold_options( int argc, char** argv ) {
         bool die = false; //bool vcf_load = false; //bool cov_load = false;
-        //if(argc <= 2) { die = true; }
+        if (argc < 2) {
+          std::cerr << "\n" << SCAFFOLD_USAGE_MESSAGE;
+          exit(1);
+        }
         if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
                 std::cerr << "\n" << SCAFFOLD_USAGE_MESSAGE;
                 exit(1);
@@ -66,6 +69,7 @@ static void parse_scaffold_options( int argc, char** argv ) {
           std::cerr << "\n" << SCAFFOLD_USAGE_MESSAGE;
           exit(1);
         }
+        if (opt::tenx_block_cutoff > 0) { int temp_bc = opt::tenx_block_cutoff; opt::tenx_block_cutoff = -temp_bc; }
         //parse_region_string( opt::chr_choice );
         cout << endl;
         cout << "############### running scaffold phaser ############### " << endl;
@@ -244,9 +248,9 @@ void pq_phasing(int num_block, map_matrix<int> total_matrix, block_dictionary& b
 	//		int pos1 = pdict.double_positions[i];   //int hap1 = pdict.haplotype[i];
         //        	int block1 = pdict.block[i];
 	//		if ( pos1 > centromere_pos ) {
-	//			bl_dict.subset_haplotype[bl_dict.block_map[block1]] = bl_dict.subset_haplotype[bl_dict.block_map[block1]]*-1; 
+	//			bl_dict.subset_haplotype[bl_dict.block_map[block1]] = bl_dict.subset_haplotype[bl_dict.block_map[block1]]*-1;
 	//		}
-	//	}	 
+	//	}
 	//}
 }
 
@@ -287,8 +291,8 @@ void run_scaffold( int argc, char** argv ) {
 	// ############################### load hap solution and hic links ###########################
 	read_hap_solution_initialize( opt::input_hap_sol_file, pdict );
 	//
-	hic_link hlink; 
-	read_graph hic_rgraph; 
+	hic_link hlink;
+	read_graph hic_rgraph;
 	variant_graph hic_vgraph;
 	read_variant_graph_file( opt::input_hic_graph_file, opt::chr_choice, hic_vgraph, hic_rgraph );
 	link_hashes( hic_vgraph, hic_rgraph );
@@ -312,16 +316,8 @@ void run_scaffold( int argc, char** argv ) {
 	//#############################################
         cout << " solver finished " << endl;
 	pq_phasing( num_block, total_matrix, bl_dict, pdict, hlink, centromere_pos );
-	cout << " phasing pq arm chr: " << opt::chr_choice << endl; 	
+	cout << " phasing pq arm chr: " << opt::chr_choice << endl;
 	cout << " centromere position: " << centromere_pos << endl;
-	//for (int i = 0; i < bl_dict.length_subset; i++) {
-	//	for (auto const &ent1 : bl_dict.distance_matrix.mat[i]) {
-	//		auto const &m = ent1.first;
-	//		if (i == 212 ) {
-	//			cout << i << " " << m << " " << bl_dict.subset_haplotype[i] << " " << bl_dict.subset_haplotype[m] << " " << bl_dict.distance_matrix(i,m) << endl;
-	//		}
-	//	}
-	//}
 	//#############################################
         ///////////// write haplotype output
         cout << " writing scaffold file: " << scaffoldsolutionFile << endl;
@@ -331,5 +327,3 @@ void run_scaffold( int argc, char** argv ) {
 	write_block_phasing_matrix( bl_dict, bmatrixFile );
         return;
 };
-
-

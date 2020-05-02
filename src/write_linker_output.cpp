@@ -28,13 +28,13 @@ void write_het_bx_coverage( std::unordered_map<std::string,variant_node>& var_di
                 for (auto& it2 : it.second.unique_dict) { ofile << it2.first << "|" << it2.second << "\t"; }
                 ofile << it.second.unique_total << "\t";
 		ofile << it.second.ref_base << ":";
-		for ( std::set<std::string>::iterator it4=ref_bx_set.begin(); it4!=ref_bx_set.end(); ++it4 ) { 
+		for ( std::set<std::string>::iterator it4=ref_bx_set.begin(); it4!=ref_bx_set.end(); ++it4 ) {
 			ofile << *it4;
 			if (std::distance(ref_bx_set.begin(), it4) < (ref_bx_set.size()-1) ) { ofile << ","; }
 		}
 		ofile << "\t";
 		ofile << it.second.var_base << ":";
-                for ( std::set<std::string>::iterator it5=var_bx_set.begin(); it5!=var_bx_set.end(); ++it5 ) { 
+                for ( std::set<std::string>::iterator it5=var_bx_set.begin(); it5!=var_bx_set.end(); ++it5 ) {
 			ofile << *it5;
 			if (std::distance(var_bx_set.begin(), it5) < (var_bx_set.size()-1) ) { ofile << ","; }
 		}
@@ -46,7 +46,7 @@ void write_het_bx_coverage( std::unordered_map<std::string,variant_node>& var_di
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void write_het_coverage_filter( std::unordered_map<std::string,variant_node>& var_dict, std::string coverageFile ) {
         ofstream ofile; ofile.open(coverageFile);
-        for (auto& it : var_dict) { 
+        for (auto& it : var_dict) {
 		//cout << it.first << "  " << it.second.filter << "  " << it.second.var << endl;
                 if ( it.second.var ) {
 		if ( it.second.filter ) {
@@ -77,9 +77,9 @@ void write_hic_links( std::unordered_map<std::string,variant_node>& var_dict, st
 			bool first = true; ofile << "[";
 			for (int j = 0; j < v1.size(); j++) {
 				if ( std::find(v2.begin(), v2.end(), v1[j]) != v2.end() ) {
-					if (!first) { ofile << ','; } 
-					first = false; 
-					ofile << v1[j]; 
+					if (!first) { ofile << ','; }
+					first = false;
+					ofile << v1[j];
 				}
 			}
 			ofile << "]" << endl;
@@ -106,7 +106,18 @@ void write_scaffold( std::string chr_choice, std::string outputFile, block_dicti
 		ofile << chr_choice << "\t" << arm1 << "\t" << pos1 << "\t" << ref_hash << "\t" << alt_hash << "\t" << hap1*block_hap1 << "\t" << "block:" << "\t" << block_hap1 << "\t" << block1 << "\t" << "tenx_energy(spin/block):" << "\t" << deltaE << "\t" << switchE << endl;
 		}
 	}
-        ofile.close();
+  ofile.close();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void write_recovered( std::string outputFile, std::map<int,recovered_node>& recovered_map ) {
+  ofstream ofile; ofile.open(outputFile);
+  ofile << "#position" << "\t" << "scaffold_haplotype" << "\t" << "ref_numA" << "\t" << "ref_numB" << "\t" << "alt_numA" << "\t" << "alt_numB" << "\t" << "ref_numA_uniq_pos" << "\t" << "ref_numB_uniq_pos" << "\t" << "alt_numA_uniq_pos" << "\t" << "alt_numB_uniq_pos" << "\t" << "ref_numA_uniq_hash" << "\t" << "ref_numB_uniq_hash" << "\t" << "alt_numA_uniq_hash" << "\t" << "alt_numB_uniq_hash" << endl;
+	for (auto& it : recovered_map) {
+    recovered_node loop_node = it.second;  //cout << loop_node.pos << "\t" << loop_node.hap << endl;
+    ofile << loop_node.pos << "\t" << loop_node.hap << "\t" << loop_node.ref_numA << "\t" << loop_node.ref_numB << "\t" << loop_node.alt_numA << "\t" << loop_node.alt_numB << "\t" << loop_node.upos_ref_numA << "\t" << loop_node.upos_ref_numB << "\t" << loop_node.upos_alt_numA << "\t" << loop_node.upos_alt_numB << "\t" << loop_node.bx_ref_numA << "\t" << loop_node.bx_ref_numB << "\t" << loop_node.bx_alt_numA << "\t" << loop_node.bx_alt_numB << endl;
+	}
+  ofile.close();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,11 +187,11 @@ void write_hash_link_list( std::unordered_map<std::string,variant_node>& var_dic
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-//void write_het_links( std::unordered_map<std::string,variant_node>& var_dict, std::string outputFile, std::string chr_choice ) { 
+//void write_het_links( std::unordered_map<std::string,variant_node>& var_dict, std::string outputFile, std::string chr_choice ) {
 //        ofstream ofile; ofile.open(outputFile);
 //        for (auto& it : var_dict) {
 //		std::string variant1 = chr_choice + "_" + it.first;
-//		for (auto it2 : it.second.connections) { 
+//		for (auto it2 : it.second.connections) {
 //			std::string variant2 = chr_choice + "_" it2.first;
 //		}
 //	}
@@ -220,8 +231,8 @@ void write_hap_solution( std::unordered_map<std::string,variant_node>& var_dict,
 void write_bin_matrix( std::unordered_map<int,gen_bin>& bx_map, std::string outputFile, std::string contig_name, int binsize ) {
         ofstream ofile; ofile.open(outputFile);
         for (auto& it : bx_map) {
-                for (auto& it2 : it.second.connections) { 
-			ofile << contig_name << "\t" << it.first*binsize << "\t" << "-" << "\t" << contig_name << "\t" << it2.first*binsize << "\t" << "+" << "\t" << it2.second << endl; 
+                for (auto& it2 : it.second.connections) {
+			ofile << contig_name << "\t" << it.first*binsize << "\t" << "-" << "\t" << contig_name << "\t" << it2.first*binsize << "\t" << "+" << "\t" << it2.second << endl;
 		}
         }
         ofile.close();
@@ -257,9 +268,9 @@ void write_block_phasing_matrix( block_dictionary& bl_dict, std::string outputFi
 	for (int i = 0; i < bl_dict.length_subset; i++) {
 		for (int j = 0; j < bl_dict.length_subset; j++) {
 			if (bl_dict.subset_matrix(i,j) != 0) {
-				ofile << i << "\t" << j << "\t" << bl_dict.block_map_inverted[i] << "\t" << bl_dict.block_map_inverted[j] <<  "\t" << bl_dict.subset_haplotype[i] << "\t" << bl_dict.subset_haplotype[j] << "\t" << bl_dict.subset_matrix(i,j) << endl; 
-			}		
-		} 
+				ofile << i << "\t" << j << "\t" << bl_dict.block_map_inverted[i] << "\t" << bl_dict.block_map_inverted[j] <<  "\t" << bl_dict.subset_haplotype[i] << "\t" << bl_dict.subset_haplotype[j] << "\t" << bl_dict.subset_matrix(i,j) << endl;
+			}
+		}
 	}
         ofile.close();
 };
@@ -286,10 +297,10 @@ void write_cn_phased( cn_map& chromosome_map, std::string outputFile, std::vecto
 		for (int j = 0; j < chromosome_map[ind].num_hets; j++) {
 			int hap = chromosome_map[ind].switch_spin*chromosome_map[ind].het_hap[j];
 			int orig_hap = chromosome_map[ind].het_hap[j];
-			int hapA_cov = 0; 
+			int hapA_cov = 0;
 			int hapB_cov = 0;
-			int orig_hapA_cov = 0; 
-			int orig_hapB_cov = 0; 
+			int orig_hapA_cov = 0;
+			int orig_hapB_cov = 0;
 			if (hap == 1) {  hapA_cov = chromosome_map[ind].ref_cov[j]; hapB_cov = chromosome_map[ind].var_cov[j]; }
 			if (hap == -1) { hapB_cov = chromosome_map[ind].ref_cov[j]; hapA_cov = chromosome_map[ind].var_cov[j]; }
                         if (orig_hap == 1) {  orig_hapA_cov = chromosome_map[ind].ref_cov[j]; orig_hapB_cov = chromosome_map[ind].var_cov[j]; }
@@ -314,7 +325,7 @@ void write_cn_phased_bins( cn_map& chromosome_map, std::string outputFile, std::
         for (auto ind : good_bins) {
 		if (nbins > (m+1)) {
 			int next = good_bins[m+1];
-			min_switch_prob = calc_switch(chromosome_map,ind,next);	
+			min_switch_prob = calc_switch(chromosome_map,ind,next);
 		}
                 double hapA_cov,hapB_cov;
                 int output_hap = chromosome_map[ind].switch_spin;
@@ -355,8 +366,3 @@ void write_cn_phased_bins( cn_map& chromosome_map, std::string outputFile, std::
                         //bool first = true;
                         //cout << "===" << endl;
                         //for (auto rn : read_names) { if (!first) { ofile << ','; } first = false; ofile << rn; }  //cout << rn << ",";
-
-
-
-
-

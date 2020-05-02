@@ -28,6 +28,10 @@ static const char *FILTER_USAGE_MESSAGE =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_filtering_options( int argc, char** argv ) {
         bool die = false;
+				if (argc < 2) {
+          std::cerr << "\n" << FILTER_USAGE_MESSAGE;
+          exit(1);
+        }
         if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
                 std::cerr << "\n" << FILTER_USAGE_MESSAGE;
                 exit(1);
@@ -55,7 +59,7 @@ static void parse_filtering_options( int argc, char** argv ) {
 };
 
 ////////////////////////////////////////////////////
-void filter_het_sites(coord_dictionary& pdict, coord_dictionary& pdict2, variant_graph& vgraph, variant_graph& vgraph2) { 
+void filter_het_sites(coord_dictionary& pdict, coord_dictionary& pdict2, variant_graph& vgraph, variant_graph& vgraph2) {
 	int number_filter = 0;
         for (int j = 0; j < pdict.num_paired; j++) {
                 int loop_pos = pdict.sorted_paired_positions[j];
@@ -75,14 +79,14 @@ void filter_het_sites(coord_dictionary& pdict, coord_dictionary& pdict2, variant
                 int rnum = vgraph[het_string].base_dict[rbase_char];    int rnum2 = vgraph2[het_string].base_dict[rbase_char2];
                 int vnum = vgraph[het_string].base_dict[vbase_char];    int vnum2 = vgraph2[het_string].base_dict[vbase_char2];
                 int total_normal = rnum + vnum;
-		double rfrac = 0.0; 
+		double rfrac = 0.0;
 		double vfrac = 0.0;
 		double min_fraction = 0.0;
 		bool isvariant_normal = vgraph[het_string].var;
 		bool isvariant_tumor = vgraph2[het_string].var;
 		//cout << het_string << " " << het_string2 << " " << loop_pos << " " << rbase_char << " " << vbase_char << " " << rbase_char2 << " " << vbase_char2 << " " << rnum << " " << vnum << " " << rnum2 << " " << vnum2 << endl;
-		if ( total_normal > 0 ) { 
-			rfrac = (double) rnum / (double) total_normal; 
+		if ( total_normal > 0 ) {
+			rfrac = (double) rnum / (double) total_normal;
                 	vfrac = (double) vnum / (double) total_normal;
 			min_fraction = std::min(rfrac,vfrac);
 		}
@@ -108,14 +112,13 @@ void run_variant_filtering( int argc, char** argv ) {
         variant_graph vgraph;
         coord_dictionary pdict;
         read_het_coverage( opt::normal_cov_file, vgraph );
-	bool paired = true;
-	initialize_pdict( vgraph, pdict, paired );
-	/////////// load tumor coverage  
+	initialize_pdict( vgraph, pdict, false );
+	/////////// load tumor coverage
 	variant_graph vgraph2;
 	coord_dictionary pdict2;
 	if(opt::filter_tumor) { read_het_coverage( opt::tumor_cov_file, vgraph2 ); }
 	else { read_het_coverage( opt::normal_cov_file, vgraph2 ); }
-	initialize_pdict( vgraph2, pdict2, paired );
+	initialize_pdict( vgraph2, pdict2, false );
 	///////////
 	filter_het_sites( pdict, pdict2, vgraph, vgraph2 );
         //##############################################

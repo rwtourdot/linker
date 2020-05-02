@@ -57,12 +57,12 @@ static void parse_region_string( std::string samtools_region ) {
 				opt::chr_choice = cid;
 				opt::start_bound = start_int;
 				opt::end_bound = end_int;
-				opt::region_defined = true;	
+				opt::region_defined = true;
 			}
 			else { std::cerr << " region string problem  \n" << HIC_PHASER_USAGE_MESSAGE; exit(1); }
 		}
 		else { std::cerr << " region string problem  \n" << HIC_PHASER_USAGE_MESSAGE; exit(1); }
-	}	
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,13 +117,12 @@ void run_hic_phaser( int argc, char** argv ) {
         vcf_vector vvec;
         read_graph rgraph;
         variant_graph vgraph;
-	bool paired = true;
         contig_name_map(opt::input_bam_file,chr_str_map);
         int chromosome = chr_str_map[opt::chr_choice];
 	//##################
         read_het_coverage( opt::input_het_cov, vgraph );
         //vvec = load_vcf_file(opt::input_vcf_file,chromosome);
-        initialize_pdict( vgraph, pdict, paired );
+        initialize_pdict( vgraph, pdict, false );
         //#################### start of code ##########################
 	//if (opt::region_defined) { subset_het_sites(vvec,opt::start_bound,opt::end_bound); }
         connect_up_variants_hic_bam_pileup(pdict,opt::input_bam_file,chromosome,vgraph,rgraph,opt::technology);
@@ -131,7 +130,6 @@ void run_hic_phaser( int argc, char** argv ) {
 	calc_coverage_unique_hash(vgraph);
         //prune_graph(vgraph);
 	write_hic_links(vgraph,output_hic_file,opt::chr_choice);
-        //static const std::size_t length = pdict.num_paired;
 	///////////// create global datastructures for haplotype solver
 	///////////// write haplotype output
         return;

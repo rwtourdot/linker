@@ -33,6 +33,10 @@ static const char *MATRIX_USAGE_MESSAGE =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void parse_bin_matrix_options( int argc, char** argv ) {
         bool die = false;            //cout << "there are " << argc << " arguments:\n";
+        if (argc < 2) {
+          std::cerr << "\n" << MATRIX_USAGE_MESSAGE;
+          exit(1);
+        }
         if (string(argv[1]) == "help" || string(argv[1]) == "--help") {
                 std::cerr << "\n" << MATRIX_USAGE_MESSAGE;
                 exit(1);

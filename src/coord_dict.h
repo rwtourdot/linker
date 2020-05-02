@@ -31,7 +31,7 @@ public:
     std::unordered_map<int,int> ref_index;
     std::unordered_map<int,std::vector<int> > base_number;
     int num_paired,num_total;
-    void initialize( std::unordered_map<std::string,variant_node>& , bool paired );
+    void initialize( std::unordered_map<std::string,variant_node>& , bool loh_mode );
     void get_submatrix_bounds( map_matrix<int>& );
     void hap_random_initialization();
     void hap_zero_initialization();
