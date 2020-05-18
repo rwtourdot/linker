@@ -112,10 +112,10 @@ void write_scaffold( std::string chr_choice, std::string outputFile, block_dicti
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void write_recovered( std::string outputFile, std::map<int,recovered_node>& recovered_map ) {
   ofstream ofile; ofile.open(outputFile);
-  ofile << "#position" << "\t" << "scaffold_haplotype" << "\t" << "ref_numA" << "\t" << "ref_numB" << "\t" << "alt_numA" << "\t" << "alt_numB" << "\t" << "ref_numA_uniq_pos" << "\t" << "ref_numB_uniq_pos" << "\t" << "alt_numA_uniq_pos" << "\t" << "alt_numB_uniq_pos" << "\t" << "ref_numA_uniq_hash" << "\t" << "ref_numB_uniq_hash" << "\t" << "alt_numA_uniq_hash" << "\t" << "alt_numB_uniq_hash" << endl;
+  ofile << "#position" << "\t" << "scaffold_haplotype" << "\t" << "ref_numA" << "\t" << "ref_numB" << "\t" << "alt_numA" << "\t" << "alt_numB" << "\t" << "ref_numA_uniq_pos" << "\t" << "ref_numB_uniq_pos" << "\t" << "alt_numA_uniq_pos" << "\t" << "alt_numB_uniq_pos" << "\t" << "ref_numA_uniq_hash" << "\t" << "ref_numB_uniq_hash" << "\t" << "alt_numA_uniq_hash" << "\t" << "alt_numB_uniq_hash"<< "\t" << endl;
 	for (auto& it : recovered_map) {
     recovered_node loop_node = it.second;  //cout << loop_node.pos << "\t" << loop_node.hap << endl;
-    ofile << loop_node.pos << "\t" << loop_node.hap << "\t" << loop_node.ref_numA << "\t" << loop_node.ref_numB << "\t" << loop_node.alt_numA << "\t" << loop_node.alt_numB << "\t" << loop_node.upos_ref_numA << "\t" << loop_node.upos_ref_numB << "\t" << loop_node.upos_alt_numA << "\t" << loop_node.upos_alt_numB << "\t" << loop_node.bx_ref_numA << "\t" << loop_node.bx_ref_numB << "\t" << loop_node.bx_alt_numA << "\t" << loop_node.bx_alt_numB << endl;
+    ofile << loop_node.pos << "\t" << loop_node.hap << "\t" << loop_node.ref_numA << "\t" << loop_node.ref_numB << "\t" << loop_node.alt_numA << "\t" << loop_node.alt_numB << "\t" << loop_node.upos_ref_numA << "\t" << loop_node.upos_ref_numB << "\t" << loop_node.upos_alt_numA << "\t" << loop_node.upos_alt_numB << "\t" << loop_node.ref_numA_hashcall << "\t" << loop_node.ref_numB_hashcall << "\t" << loop_node.alt_numA_hashcall << "\t" << loop_node.alt_numB_hashcall << endl;
 	}
   ofile.close();
 }

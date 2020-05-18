@@ -90,22 +90,45 @@ void run_solve_hap( int argc, char** argv ) {
   coord_dictionary pdict;
   read_graph rgraph;
   variant_graph vgraph;
+  float t = clock();
   //#################### start of code ##########################
 	cout << "loading graph " << endl;
+	t = clock();
 	read_variant_graph_file(opt::input_graph_file,opt::chr_choice,vgraph,rgraph);
+	t = float(clock() - t)/ CLOCKS_PER_SEC;
+	cout << "read graph variant file == time: " << t << endl;
+	cout << "=============== " << endl;
 	cout << "linking graph " << endl;
 	//#############################################################
+       t = clock();
   link_hashes(vgraph,rgraph);
+        t = float(clock() - t)/ CLOCKS_PER_SEC;
+        cout << "link hashes == time: " << t << endl;
+       t = clock();
+	cout << "=============== " << endl;
+	cout << "pruning graph " << endl;
   prune_graph(vgraph);
+        t = float(clock() - t)/ CLOCKS_PER_SEC;
+        cout << "prune graph == time: " << t << endl;
+	cout << "=============== " << endl;
+	cout << "initialize matrix coordinates " << endl;
+       t = clock();
   initialize_pdict(vgraph,pdict,opt::loh_mode);
+        t = float(clock() - t)/ CLOCKS_PER_SEC;
+        cout << "init coord dict == time: " << t << endl;
+	cout << "=============== " << endl;
 	//#############################################################
   if (opt::output_net) { write_link_network(vgraph,output_network_file,opt::chr_choice); }
   static const std::size_t length = pdict.num_paired;
 	///////////// create global datastructures for haplotype solver
   map_matrix<int> num_matrix_second(length);
 	map_matrix<double> diff_matrix(length);
+       t = clock();
   if (opt::loh_mode) { initialize_solver_loh(vgraph,pdict,diff_matrix,num_matrix_second); }
   else { initialize_solver(vgraph,pdict,diff_matrix,num_matrix_second); }
+        t = float(clock() - t)/ CLOCKS_PER_SEC;
+        cout << "init solver == time: " << t << endl;
+	cout << "=============== " << endl;
 	solver_recursive(vgraph,pdict,diff_matrix,num_matrix_second);
 	//solver(vgraph,pdict,diff_matrix,num_matrix_second);
 	///////////// write haplotype output

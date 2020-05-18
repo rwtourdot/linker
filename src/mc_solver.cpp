@@ -5,7 +5,7 @@ void solver( std::unordered_map<std::string,variant_node>& var_dict, coord_dicti
 	float t = clock();
 	static const std::size_t length = pdict.num_paired;
 	map_matrix<int> num_matrix_third(length);
-	cout << "========" << endl;
+	//cout << "========" << endl;
 	cout << "monte carlo solver: " << endl;
 	length_cutoff_nmatrix( pdict, diff_matrix, num_matrix_second, num_matrix_third );
 	vector<bool> flip_maxima(length);
@@ -33,7 +33,7 @@ void solver_recursive( std::unordered_map<std::string,variant_node>& var_dict, c
 	float t = clock();
 	static const std::size_t length = pdict.num_paired;
 	map_matrix<int> num_matrix_third(length);
-	cout << "========" << endl;
+	//cout << "========" << endl;
 	cout << "monte carlo solver: " << endl;
 	length_cutoff_nmatrix( pdict, diff_matrix, num_matrix_second, num_matrix_third );
 	for (int i = 0; i < solver_loops; i++) {
@@ -53,7 +53,7 @@ void solver_recursive( std::unordered_map<std::string,variant_node>& var_dict, c
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void solver_recursive_hic( block_dictionary& bdict, std::vector<int> hic_limit_loop, map_matrix<int> block_matrix ) {
 	float t = clock();
-	cout << "========" << endl;
+	//cout << "========" << endl;
 	cout << "monte carlo solver:" << endl;
 	for( int k = 0; k < hic_limit_loop.size(); k++ ) {
 		int hlimit = hic_limit_loop[k];

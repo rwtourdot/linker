@@ -99,9 +99,11 @@ void recover_links( std::string chr_choice, coord_dictionary& pdict, variant_gra
 		int pos1 = it.first;
     int hap1 = 0;
     int ref_numA,ref_numB,alt_numA,alt_numB;
+    int ref_numA_hashcall,ref_numB_hashcall,alt_numA_hashcall,alt_numB_hashcall;
 		vector<std::string> ref_bx_listA,alt_bx_listA,ref_bx_listB,alt_bx_listB;
 		vector<int> upos_ref_listA,upos_alt_listA,upos_ref_listB,upos_alt_listB;
     ref_numA = 0; ref_numB = 0; alt_numA = 0; alt_numB = 0;
+    ref_numA_hashcall = 0; ref_numB_hashcall = 0; alt_numA_hashcall = 0; alt_numB_hashcall = 0;
     //////////////////////////////////////////////////////////
 		std::string ref_base = ref_position_map[pos1];
 		std::string alt_base = alt_position_map[pos1];
@@ -113,6 +115,7 @@ void recover_links( std::string chr_choice, coord_dictionary& pdict, variant_gra
 		if (i >= 0 ) { hap1 = pdict.haplotype[i]; in_scaffold = true; }
     for (int l=0; l < vgraph[ref_hash].connected_reads_long_form.size(); l++) {
       std::string hash_tag = vgraph[ref_hash].connected_reads_long_form[l];
+      std::map<std::string,int> hash_hap_count; hash_hap_count["A"] = 0; hash_hap_count["B"] = 0;
       for (int m=0; m < rgraph[vgraph[ref_hash].connected_reads_long_form[l]].connected_strings.size(); m++) {
         std::string connected_het = rgraph[vgraph[ref_hash].connected_reads_long_form[l]].connected_strings[m];
         //cout << l << "\t" << connected_het << "\t" << vgraph[ref_hash].connected_reads_long_form[l] << "\t" << endl;
@@ -128,15 +131,19 @@ void recover_links( std::string chr_choice, coord_dictionary& pdict, variant_gra
             int call_allele = hap2*is_variant;
     				int diffp = std::abs( pos1 - pos2 );
             if ( diffp < max_delta_p ) {
-              if ( ab_hap[call_allele] == "A" ) { ref_numA += 1; upos_ref_listA.push_back(pos2); ref_bx_listA.push_back(hash_tag); }
-              if ( ab_hap[call_allele] == "B" ) { ref_numB += 1; upos_ref_listB.push_back(pos2); ref_bx_listB.push_back(hash_tag); }
+              if ( ab_hap[call_allele] == "A" ) { ref_numA += 1; upos_ref_listA.push_back(pos2); ref_bx_listA.push_back(hash_tag); hash_hap_count["A"] += 1;}
+              if ( ab_hap[call_allele] == "B" ) { ref_numB += 1; upos_ref_listB.push_back(pos2); ref_bx_listB.push_back(hash_tag); hash_hap_count["B"] += 1;}
             }
           }
         }
       }
+      cout << ref_hash << "\t" << hash_tag << "\t" << hash_hap_count["A"] << "\t" << hash_hap_count["B"] << endl;
+      if (hash_hap_count["A"] > hash_hap_count["B"]) { ref_numA_hashcall += 1; }
+      if (hash_hap_count["B"] > hash_hap_count["A"]) { ref_numB_hashcall += 1; }
     }
     for (int l=0; l < vgraph[alt_hash].connected_reads_long_form.size(); l++) {
       std::string hash_tag = vgraph[alt_hash].connected_reads_long_form[l];
+      std::map<std::string,int> hash_hap_count; hash_hap_count["A"] = 0; hash_hap_count["B"] = 0;
       for (int m=0; m < rgraph[vgraph[alt_hash].connected_reads_long_form[l]].connected_strings.size(); m++) {
         std::string connected_het = rgraph[vgraph[alt_hash].connected_reads_long_form[l]].connected_strings[m];
         //cout << l << "\t" << connected_het << "\t" << vgraph[alt_hash].connected_reads_long_form[l] << "\t" << endl;
@@ -152,12 +159,15 @@ void recover_links( std::string chr_choice, coord_dictionary& pdict, variant_gra
             int call_allele = hap2*is_variant;
     				int diffp = std::abs( pos1 - pos2 );
             if ( diffp < max_delta_p ) {
-              if ( ab_hap[call_allele] == "A" ) { alt_numA += 1; upos_alt_listA.push_back(pos2); alt_bx_listA.push_back(hash_tag); }
-              if ( ab_hap[call_allele] == "B" ) { alt_numB += 1; upos_alt_listB.push_back(pos2); alt_bx_listB.push_back(hash_tag); }
+              if ( ab_hap[call_allele] == "A" ) { alt_numA += 1; upos_alt_listA.push_back(pos2); alt_bx_listA.push_back(hash_tag); hash_hap_count["A"] += 1;}
+              if ( ab_hap[call_allele] == "B" ) { alt_numB += 1; upos_alt_listB.push_back(pos2); alt_bx_listB.push_back(hash_tag); hash_hap_count["B"] += 1;}
             }
           }
         }
       }
+      cout << alt_hash << "\t" << hash_tag << "\t" << hash_hap_count["A"] << "\t" << hash_hap_count["B"] << endl;
+      if (hash_hap_count["A"] > hash_hap_count["B"]) { alt_numA_hashcall += 1; }
+      if (hash_hap_count["B"] > hash_hap_count["A"]) { alt_numB_hashcall += 1; }
     }
     std::set<int> set_upos_alt_listA(upos_alt_listA.begin(), upos_alt_listA.end());
     std::set<int> set_upos_alt_listB(upos_alt_listB.begin(), upos_alt_listB.end());
@@ -173,6 +183,8 @@ void recover_links( std::string chr_choice, coord_dictionary& pdict, variant_gra
     rnode.hap = hap1;
     rnode.ref_numA = ref_numA; rnode.ref_numB = ref_numB;
     rnode.alt_numA = alt_numA; rnode.alt_numB = alt_numB;
+    rnode.ref_numA_hashcall = ref_numA_hashcall; rnode.ref_numB_hashcall = ref_numB_hashcall;
+    rnode.alt_numA_hashcall = alt_numA_hashcall; rnode.alt_numB_hashcall = alt_numB_hashcall;
     rnode.upos_ref_numA = set_upos_ref_listA.size();
     rnode.upos_ref_numB = set_upos_ref_listB.size();
     rnode.upos_alt_numA = set_upos_alt_listA.size();

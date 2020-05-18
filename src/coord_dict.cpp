@@ -12,8 +12,8 @@ void coord_dictionary::initialize( std::unordered_map<std::string,variant_node> 
         }
         all_positions.push_back(it.second.pos);
     }
-    cout << " double positions: " << double_positions.size() << endl;
-    cout << " all positions: " << all_positions.size() << endl;
+    cout << "double positions: " << double_positions.size() << endl;
+    cout << "all positions: " << all_positions.size() << endl;
     std::sort( double_positions.begin(), double_positions.end() );
     /////////////////////////
     std::sort( all_positions.begin(), all_positions.end() );

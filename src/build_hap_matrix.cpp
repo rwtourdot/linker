@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void link_hashes( std::unordered_map<std::string,variant_node>& var_dict, std::unordered_map<std::string,read_tree>& read_graph ) {
-        cout << "========" << endl;
+        //cout << "========" << endl;
         int i = 0;   clock_t t;
         t = clock();
         for (auto& it : var_dict) {  //int j = 0;
@@ -18,7 +18,7 @@ void link_hashes( std::unordered_map<std::string,variant_node>& var_dict, std::u
         }
         for (auto& it : var_dict) { it.second.count_connections(); }
         t = clock() - t;
-        cout << "connected hashes ----- time: " << t << endl;
+        //cout << "connected hashes ----- time: " << t << endl;
         return;
 };
 
@@ -142,25 +142,37 @@ void initialize_pdict( std::unordered_map<std::string,variant_node>& var_dict, c
 void initialize_solver( std::unordered_map<std::string,variant_node>& var_dict, coord_dictionary& pdict, map_matrix<double>& diff_matrix, map_matrix<int>& num_matrix_second ) {
         clock_t t;   t = clock();
         static const std::size_t length = pdict.num_paired;
+        // added this loop to presearch pdict for index positions
+        std::unordered_map<int,int> index_map;
+        for (auto& it : var_dict) {
+          int vpos = it.second.pos;
+          ptrdiff_t i = get_index_var( pdict.sorted_paired_positions, vpos );
+          int index = i;
+          if (index < pdict.sorted_paired_positions.size() ) { index_map[vpos] = index; }
+          else { index_map[vpos] = -1; }
+        }
+        // end of added code
         map_matrix<int> num_matrix(length),span_matrix(length);
         map_matrix<double> corr_matrix(length),binomial_matrix(length); //diff_matrix(length),
         map_matrix_vector link_matrix(length);
-        cout << "========" << endl;
+        //cout << "========" << endl;
         cout << "initializing solver: " << endl;
         int i = 0;
         for (auto& it : pdict.sorted_paired_positions) {
                 std::string node1 = pdict.paired_dict[it].at(0);
                 std::string node2 = pdict.paired_dict[it].at(1);  //number_of_connections = var_dict[node1].num_hets + var_dict[node2].num_hets
                 for (auto it2 : var_dict[node1].connections) {
-                        ptrdiff_t j = get_index_var( pdict.sorted_paired_positions,var_dict[it2.first].pos );    //cout << i << "  " << j << endl;
-                        if (j < pdict.sorted_paired_positions.size() && i != j) {
+                        //ptrdiff_t j = get_index_var( pdict.sorted_paired_positions,var_dict[it2.first].pos );    //cout << i << "  " << j << endl;
+                        int j = index_map[var_dict[it2.first].pos];
+                        if (j < pdict.sorted_paired_positions.size() && j >= 0 && i != j) {
                                 link_matrix.add(i,j,var_dict[node1].var,var_dict[it2.first].var,it2.second);
                                 num_matrix.add_to(i,j,it2.second);
                         }
                 }
                 for (auto it2 : var_dict[node2].connections) {
-                        ptrdiff_t j = get_index_var( pdict.sorted_paired_positions,var_dict[it2.first].pos );
-                        if (j < pdict.sorted_paired_positions.size() && i != j) {
+                        //ptrdiff_t j = get_index_var( pdict.sorted_paired_positions,var_dict[it2.first].pos );
+                        int j = index_map[var_dict[it2.first].pos];
+                        if (j < pdict.sorted_paired_positions.size() && j >= 0 && i != j) {
                                 link_matrix.add(i,j,var_dict[node2].var,var_dict[it2.first].var,it2.second);
                                 num_matrix.add_to(i,j,it2.second);
                         }
@@ -174,8 +186,8 @@ void initialize_solver( std::unordered_map<std::string,variant_node>& var_dict, 
                 }
         }
         cout << "size of num matrix: " << diff_matrix.mat.size() << endl;
-        t = clock() - t;
-        cout << "created link matrix -- time: " << t << endl;
+        //t = clock() - t;
+        //cout << "created link matrix -- time: " << t << endl;
         link_matrix_calculations(link_matrix,num_matrix_second,span_matrix,corr_matrix,diff_matrix);
         pdict.get_submatrix_bounds(num_matrix_second);
         cout << "double positions size: " << pdict.double_positions.size() << endl;
@@ -188,6 +200,16 @@ void initialize_solver( std::unordered_map<std::string,variant_node>& var_dict, 
 void initialize_solver_loh( std::unordered_map<std::string,variant_node>& var_dict, coord_dictionary& pdict, map_matrix<double>& diff_matrix, map_matrix<int>& num_matrix_second ) {
         clock_t t;   t = clock();
         static const std::size_t length = pdict.num_paired;
+        // added this loop to presearch pdict for index positions
+        std::unordered_map<int,int> index_map;
+        for (auto& it : var_dict) {
+          int vpos = it.second.pos;
+          ptrdiff_t i = get_index_var( pdict.sorted_paired_positions, vpos );
+          int index = i;
+          if (index < pdict.sorted_paired_positions.size() ) { index_map[vpos] = index; }
+          else { index_map[vpos] = -1; }
+        }
+        // end of added code
         cout << length << endl;
         map_matrix<int> num_matrix(length),span_matrix(length);
         map_matrix<double> corr_matrix(length),binomial_matrix(length); //diff_matrix(length),
@@ -200,9 +222,10 @@ void initialize_solver_loh( std::unordered_map<std::string,variant_node>& var_di
           for (int k = 0; k < pdict.paired_dict[it].size(); k++) {
                   std::string node_loop = pdict.paired_dict[it].at(k);
                   for (auto it2 : var_dict[node_loop].connections) {
-                          ptrdiff_t j = get_index_var( pdict.sorted_paired_positions,var_dict[it2.first].pos );
+                          //ptrdiff_t j = get_index_var( pdict.sorted_paired_positions,var_dict[it2.first].pos );
+                          int j = index_map[var_dict[it2.first].pos];
                           //cout << node_loop << " " << i << "  " << j << "  " << pdict.sorted_paired_positions.size() << endl;
-                          if (j < pdict.sorted_paired_positions.size() && i != j) {
+                          if (j < pdict.sorted_paired_positions.size() && j >= 0 && i != j) {
                                   link_matrix.add(i,j,var_dict[node_loop].var,var_dict[it2.first].var,it2.second);
                                   num_matrix.add_to(i,j,it2.second);
                           }
