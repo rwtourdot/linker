@@ -17,6 +17,7 @@ using namespace std;
 
 ///////////// solver_cutoffs //////
 #define solver_loops 30                 // 10  // {val} the number of spin flip block flip loops
+//#define solver_loops 5                 // 10  // {val} the number of spin flip block flip loops
 #define solver_loops_hic 10                 // 10  // {val} the number of spin flip block flip loops
 #define pos_diff_cutoff 100000          // {val} if the maximum delta genome distance - band width
 

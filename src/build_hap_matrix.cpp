@@ -79,6 +79,39 @@ void calculate_epso( int i, int j, map_matrix_vector& expanded, map_matrix<int>&
 
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//void calculate_link_fractions( int i, int j, map_matrix_vector& expanded, map_matrix<int>& nmatrix, map_matrix<int>& span_matrix, map_matrix<double>& corr_matrix, map_matrix<double>& diff_matrix ) {
+//        int vv=0,rv=0,total=0,span=0;
+//        double diff = 0.0,frac=0.0,corr=0.0;
+//        for (int m = 0; m < nmatrix(i,j); m++) {
+//                total++;
+//                if (expanded.return_val(i,j,m)) { vv++; } else { rv++; }
+//        }
+        //if (i == j) { cout << " within the loop " << total << "  " << vv << "  " << rv << endl; }
+//        if (total > 0 ) {
+//                if (vv > rv) { span = vv; }
+//                if (rv >= vv) { span = rv; }
+//                diff = (double)(vv-rv)*abs(vv-rv)/(vv+rv);
+//                corr = (double)(vv-rv)/total;
+//                diff_matrix.set_val(i,j,diff);
+//                corr_matrix.set_val(i,j,corr);
+//                span_matrix.set_val(i,j,span);
+//        };
+//};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//void link_matrix_calculations( map_matrix_vector& expanded, map_matrix<int>& nmatrix, map_matrix<int>& span_matrix, map_matrix<double>& corr_matrix, map_matrix<double>& diff_matrix ) {
+//        for(auto const &ent1 : nmatrix.mat) {
+//                auto const &i = ent1.first;
+//                auto const &inner_map = ent1.second;
+//                for(auto const &ent2 : ent1.second) {
+//                        auto const &j = ent2.first;
+//                        auto const &inner_value = ent2.second;   //cout << i << "  " << j << endl;
+//                        calculate_link_fractions(i,j,expanded,nmatrix,span_matrix,corr_matrix,diff_matrix);
+//                }
+//        }
+//};
+
 void calculate_link_fractions( int i, int j, map_matrix_vector& expanded, map_matrix<int>& nmatrix, map_matrix<int>& span_matrix, map_matrix<double>& corr_matrix, map_matrix<double>& diff_matrix, double epso ) {
         int vv=0,rv=0,total=0,span=0;
         double diff = 0.0,frac=0.0,corr=0.0,eps=0.0;
@@ -217,13 +250,13 @@ void initialize_solver_loh( std::unordered_map<std::string,variant_node>& var_di
         cout << "========" << endl;
         cout << "initializing solver: " << endl;
         int i = 0;
-        for (auto& it : pdict.sorted_paired_positions) {
-          //cout << it << "  " << pdict.paired_dict[it].size() << endl;
+        for (auto& it : pdict.sorted_paired_positions) { //if(it == 10558150) {
+          cout << it << "  " << pdict.paired_dict[it].size() << endl;
           for (int k = 0; k < pdict.paired_dict[it].size(); k++) {
                   std::string node_loop = pdict.paired_dict[it].at(k);
                   for (auto it2 : var_dict[node_loop].connections) {
                           //ptrdiff_t j = get_index_var( pdict.sorted_paired_positions,var_dict[it2.first].pos );
-                          int j = index_map[var_dict[it2.first].pos];
+                          int j = index_map[var_dict[it2.first].pos]; //if(node_loop == "10557985_G_G" || node_loop == "10558795_C_T" || node_loop == "10558197_A_A") {
                           //cout << node_loop << " " << i << "  " << j << "  " << pdict.sorted_paired_positions.size() << endl;
                           if (j < pdict.sorted_paired_positions.size() && j >= 0 && i != j) {
                                   link_matrix.add(i,j,var_dict[node_loop].var,var_dict[it2.first].var,it2.second);

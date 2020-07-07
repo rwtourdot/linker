@@ -4,12 +4,18 @@ void coord_dictionary::initialize( std::unordered_map<std::string,variant_node> 
     for (auto it : var_dict) {
         if (it.second.paired) {
             paired_dict[it.second.pos].push_back(it.first);
-            double_positions.push_back(it.second.pos);
-            char rbase = it.second.ref_base[0];
-            char vbase = it.second.var_base[0];
-            if (it.second.var) { ref_index[it.second.pos] = 1; base_number[it.second.pos].push_back(it.second.base_dict[vbase]); }
-            else {               ref_index[it.second.pos] = 0; base_number[it.second.pos].push_back(it.second.base_dict[rbase]); }
-        }
+            unpaired_dict[it.second.pos] = it.first;
+            double_positions.push_back(it.second.pos);  //char rbase = it.second.ref_base[0]; //char vbase = it.second.var_base[0];
+	    paired[it.second.pos] = 1;
+            if (it.second.var) { char vbase = it.second.var_base[0]; ref_index[it.second.pos] = 1; base_number[it.second.pos].push_back(it.second.base_dict[vbase]); }
+            else {               char rbase = it.second.ref_base[0]; ref_index[it.second.pos] = 0; base_number[it.second.pos].push_back(it.second.base_dict[rbase]); }
+        } else {  //cout << it.second.pos << " " << it.second.var << endl;
+	    paired_dict[it.second.pos].push_back(it.first);
+	    paired[it.second.pos] = 0;
+            unpaired_dict[it.second.pos] = it.first;
+            if (it.second.var) { char vbase = it.second.var_base[0]; ref_index[it.second.pos] = 1; base_number[it.second.pos].push_back(it.second.base_dict[vbase]); }
+            else {               char rbase = it.second.ref_base[0]; ref_index[it.second.pos] = 0; base_number[it.second.pos].push_back(it.second.base_dict[rbase]); }
+	}
         all_positions.push_back(it.second.pos);
     }
     cout << "double positions: " << double_positions.size() << endl;

@@ -91,7 +91,8 @@ void init_block_matrix( int& num_block, map_matrix<int>& block_matrix, map_matri
                 loop_p = pdict.double_positions[i];
                 num_block = pdict.block[i];
                 pos_to_block[loop_p] = num_block;
-                pos_to_index[loop_p] = i;  //cout << loop_p << "\t" << num_block << "\t" << i << endl;
+                pos_to_index[loop_p] = i;  
+		cout << loop_p << "\t" << num_block << "\t" << i << endl;
         }
         map_matrix<int> temp_block_matrix(num_block);
         map_matrix<int> temp_total_matrix(num_block);
@@ -103,6 +104,7 @@ void init_block_matrix( int& num_block, map_matrix<int>& block_matrix, map_matri
                 int block1 = pdict.block[i];
                 std::string ref_hash = pdict.ref_handle[i];
                 std::string alt_hash = pdict.alt_handle[i];
+		cout << pos1 << " " << ref_hash << " " << alt_hash << endl;
                 bl_dict.add_bl_het(block1,pos1,hap1,ref_hash,alt_hash);
 		for (auto& it : hic_vgraph[ref_hash].connections) { //for (auto it2 : it.second.connections)
 			if ( hic_vgraph[ref_hash].unique_total > 0 ) {
@@ -111,18 +113,18 @@ void init_block_matrix( int& num_block, map_matrix<int>& block_matrix, map_matri
 			std::string hic_ref_base = split_string_first(split_string_first(it.first,"_",1),"_",0);
 			std::string hic_read_base = split_string_first(split_string_first(it.first,"_",1),"_",1);
 			std::string arm2 = "p"; if ( pos2 > centromere_pos ) { arm2 = "q"; }
+			cout << "in loop " << ref_hash << " " << it.first << endl;
 			int depth = it.second;
 			int diff = std::abs(pos2-pos1);
                         int block2 = pos_to_block[pos2];
                         int hap2 = pdict.haplotype[pos_to_index[pos2]];
                         int alt2 = -1; if (hic_ref_base == hic_read_base) { alt2 = 1; }
-			if ( block1 != 0 & block2 != 0 ) {  //cout << pos2 << "\t" << block1 << "\t" << block2 << endl;
+			if ( block1 != 0 & block2 != 0 ) {  
                                 int link_hap_old = alt1*hap1*alt2*hap2;
                                 int link_hap = alt1*hap1*alt2*hap2*depth;
                                 temp_total_matrix.add_to(block1,block2,link_hap);
                                 temp_total_matrix.add_to(block2,block1,link_hap);
                                 if ( diff < opt::max_hic_phasing & block1 != block2 & arm1 == arm2 ) {
-                                        //cout << block1 << "\t" << block2 << "\t" << ref_hash << "\t" << j << "\t" << link_hap << "\t" << link_hap_old << endl;
                                         temp_block_matrix.add_to(block1,block2,link_hap);
                                         temp_block_matrix.add_to(block2,block1,link_hap);
 					bl_dict.bl_nlinks[block1] += 1;
@@ -259,7 +261,8 @@ void create_hic_links( variant_graph& hic_vgraph, hic_link& hlink ) {
         int i=0;
 	for (auto& it : hic_vgraph) {
                 int pos1 = it.second.pos;
-                std::string var1 = it.first;   //cout << pos1 << "\t" << var1 << "\t" << it.second.unique_total << endl;
+                std::string var1 = it.first;   
+		//cout << pos1 << "\t" << var1 << "\t" << it.second.unique_total << endl;
                 if (it.second.unique_total > 0) {
                 for (auto it2 : it.second.connections) {  //int pos2 = 100;  //var_dict[it2.first].pos;
                         int pos2 = hic_vgraph[it2.first].pos;

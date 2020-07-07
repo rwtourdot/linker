@@ -26,6 +26,7 @@ using namespace std;
 void write_bin_matrix( std::unordered_map<int,gen_bin>& bx_map, std::string outputFile, std::string contig_name, int binsize );
 void write_het_coverage( std::unordered_map<std::string,variant_node>& var_dict, std::string coverageFile, std::string chr_choice );
 void write_hap_solution( std::unordered_map<std::string,variant_node>& var_dict, std::string hapsolutionFile, coord_dictionary& pdict, std::string chr_choice );
+void write_hap_solution_loh( std::unordered_map<std::string,variant_node>& var_dict, std::string hapsolutionFile, coord_dictionary& pdict, std::string chr_choice );
 void write_link_network( std::unordered_map<std::string,variant_node>& var_dict, std::string outputFile, std::string chr_choice );
 void write_phased_sv( std::vector<sv_entry>& sv_list, std::string outputFile );
 void write_bin_matrix_genome( full_map& chr_map, std::string outputFile, int binsize );

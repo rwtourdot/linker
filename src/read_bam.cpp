@@ -51,7 +51,7 @@ std::pair<char,int> get_base_readpos( std::vector<BamTools::CigarOp> &cigar_str,
         char base_to_return;
         int quality_to_return;  int loop_until = 0;  int s_index = 0;  int num_bases_on_read=0;
         for (int k=0; k < (int)cigar_str.size(); k++) { //cout << cigar_str[k].Length << cigar_str[k].Type << ' ';
-                if (cigar_str[k].Type != 'S') {
+                if ((cigar_str[k].Type != 'S') && (cigar_str[k].Type != 'H')) {
                         int qindex = num_bases_on_read;
                         for (int l=0; l < (int)cigar_str[k].Length; l++) { //cout << aligned_bases.at(s_index); //cout << k << "  " << "  " << s_index << " " << endl;
                                 //qmap[qindex] = s_index;

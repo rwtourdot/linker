@@ -28,8 +28,9 @@ public:
     vector<int> up_bound_submatrix,low_bound_submatrix;
     vector<int> flip_up_bound,flip_low_bound;
     std::unordered_map<int,std::vector<std::string> > paired_dict;
-    std::unordered_map<int,int> ref_index;
+    std::unordered_map<int,int> ref_index,paired;
     std::unordered_map<int,std::vector<int> > base_number;
+    std::unordered_map<int,std::string > unpaired_dict;
     int num_paired,num_total;
     void initialize( std::unordered_map<std::string,variant_node>& , bool loh_mode );
     void get_submatrix_bounds( map_matrix<int>& );

@@ -173,8 +173,10 @@ void call_blocks(coord_dictionary& pdict,int switch_cutoff ) {
 	int block_num = 0;
         for (int i = 0; i < pdict.num_paired; i++) {
 		if (pdict.switchE[i] > switch_cutoff) { block_num += 1; }
+		cout << i << " " << pdict.switchE[i] << " " << block_num << endl;
 		pdict.block[i] = block_num;
 	}
+	//cin.get();
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +214,9 @@ static void energy_sum_min_max( coord_dictionary& pdict ) {
                 if (pdict.switchE[i] > max_blockE) { max_blockE = pdict.switchE[i]; }
                 if (pdict.switchE[i] < min_blockE) { min_blockE = pdict.switchE[i]; }
                 if (pdict.switchE[i] > 0) { az_num_blockE += 1; }
+		//cout << i << " " << pdict.haplotype[i] << " " << pdict.deltaE[i] << " " << pdict.switchE[i] << endl;
         }
+	cout << "-- num paired: " << pdict.num_paired << endl;
         cout << "-- spin flip energy sum: " << sum << " minimum: " << min << " maximum: " << max << " #_above_zero: " << az_num << endl;
         cout << "-- block flip energy sum: " << sum_blockE << " minimum: " << min_blockE << " maximum: " << max_blockE << " #_above_zero: " << az_num_blockE << endl;
 };

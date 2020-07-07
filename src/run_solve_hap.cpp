@@ -135,6 +135,7 @@ void run_solve_hap( int argc, char** argv ) {
 	cout << " solver finished " << endl;
 	call_blocks(pdict,opt::block_cutoff);
 	cout << " called haplotype blocks " << endl;
-  write_hap_solution(vgraph,hapsolutionFile,pdict,opt::chr_choice);
+  if (opt::loh_mode) { write_hap_solution_loh(vgraph,hapsolutionFile,pdict,opt::chr_choice); }
+  else { write_hap_solution(vgraph,hapsolutionFile,pdict,opt::chr_choice); }
   return;
 };

@@ -3,11 +3,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void write_het_coverage( std::unordered_map<std::string,variant_node>& var_dict, std::string coverageFile, std::string chr_choice ) {
         ofstream ofile; ofile.open(coverageFile);
+	vector<char> base_order = {'I','D','G','C','A','T'};
         for (auto& it : var_dict) {
 		if ( it.second.var ) {
                 ofile << it.first << "\t" << it.second.pos << "\t";
                 ofile << it.second.ref_base << ":" << it.second.var_base << "\t";
-                for (auto& it2 : it.second.base_dict) { ofile << it2.first << "|" << it2.second << "\t"; }
+		for(auto base : base_order) {
+			//std::cout << base << "|" << it.second.base_dict[base] << "\n";
+			ofile << base << "|" << it.second.base_dict[base] << "\t";
+		}
+                //for (auto& it2 : it.second.base_dict) { ofile << it2.first << "|" << it2.second << "\t"; }
 		ofile << it.second.total_bases << "\t";
                 ofile << endl;
 		}
@@ -18,6 +23,7 @@ void write_het_coverage( std::unordered_map<std::string,variant_node>& var_dict,
 void write_het_bx_coverage( std::unordered_map<std::string,variant_node>& var_dict, std::string coverageFile, std::string chr_choice ) {
 	// print each bx tag
         ofstream ofile; ofile.open(coverageFile);
+	vector<char> base_order = {'I','D','G','C','A','T'};
         for (auto& it : var_dict) {
                 if ( it.second.var ) {
                 char rbase = it.second.ref_base[0]; char vbase = it.second.var_base[0];
@@ -25,7 +31,11 @@ void write_het_bx_coverage( std::unordered_map<std::string,variant_node>& var_di
                 std::set<std::string> var_bx_set = it.second.base_dict_set[vbase];
                 ofile << it.first << "\t" << it.second.pos << "\t";
                 ofile << it.second.ref_base << ":" << it.second.var_base << "\t";
-                for (auto& it2 : it.second.unique_dict) { ofile << it2.first << "|" << it2.second << "\t"; }
+                for(auto base : base_order) {
+                        //std::cout << base << "|" << it.second.base_dict[base] << "\n";
+                        ofile << base << "|" << it.second.base_dict[base] << "\t";
+                }
+                //for (auto& it2 : it.second.unique_dict) { ofile << it2.first << "|" << it2.second << "\t"; }
                 ofile << it.second.unique_total << "\t";
 		ofile << it.second.ref_base << ":";
 		for ( std::set<std::string>::iterator it4=ref_bx_set.begin(); it4!=ref_bx_set.end(); ++it4 ) {
@@ -46,13 +56,18 @@ void write_het_bx_coverage( std::unordered_map<std::string,variant_node>& var_di
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void write_het_coverage_filter( std::unordered_map<std::string,variant_node>& var_dict, std::string coverageFile ) {
         ofstream ofile; ofile.open(coverageFile);
+	vector<char> base_order = {'I','D','G','C','A','T'};
         for (auto& it : var_dict) {
 		//cout << it.first << "  " << it.second.filter << "  " << it.second.var << endl;
                 if ( it.second.var ) {
 		if ( it.second.filter ) {
         		ofile << it.first << "\t" << it.second.pos << "\t";
         		ofile << it.second.ref_base << ":" << it.second.var_base << "\t";
-        		for (auto& it2 : it.second.base_dict) { ofile << it2.first << "|" << it2.second << "\t"; }
+                	for(auto base : base_order) {
+                        	//std::cout << base << "|" << it.second.base_dict[base] << "\n";
+                        	ofile << base << "|" << it.second.base_dict[base] << "\t";
+                	}
+        		//for (auto& it2 : it.second.base_dict) { ofile << it2.first << "|" << it2.second << "\t"; }
         		ofile << it.second.total_bases << "\t";
         		ofile << endl;
 		}
@@ -214,6 +229,41 @@ void write_bx_links( read_graph &rgraph, std::string outputFile ) {
 	}
 	ofile.close();
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void write_hap_solution_loh( std::unordered_map<std::string,variant_node>& var_dict, std::string hapsolutionFile, coord_dictionary& pdict, std::string chr_choice ) {
+        ofstream ofile; ofile.open(hapsolutionFile);
+        std::unordered_map<int,int> opposite; opposite[0] = 1; opposite[1] = 0;
+        for (int i = 0; i < pdict.num_paired; i++) {
+                int p = pdict.sorted_paired_positions[i];
+                int m = pdict.ref_index[p];
+                int pair = pdict.paired[p];
+                std::string ref_hash,alt_hash;
+                int base_number_ref,base_number_alt;
+                if (pair == 1) {
+                        ref_hash = chr_choice + "_" + pdict.paired_dict[p][opposite[m]];
+                        alt_hash = chr_choice + "_" + pdict.paired_dict[p][m];
+                        base_number_ref = pdict.base_number[p][opposite[m]];
+                        base_number_alt = pdict.base_number[p][m];
+                } else {
+                        int var = pdict.ref_index[p];
+                        if (var == 1) {
+                                ref_hash = chr_choice + "_" + std::to_string(p) + "_l_h";
+                                alt_hash = chr_choice + "_" + pdict.unpaired_dict[p]; //pdict.paired_dict[p][m];
+                                base_number_ref = 0;
+                                base_number_alt = pdict.base_number[p][0];
+                        } else {
+                                ref_hash = chr_choice + "_" + pdict.unpaired_dict[p]; //pdict.paired_dict[p][opposite[m]];
+                                alt_hash = chr_choice + "_" + std::to_string(p) + "_l_h";
+                                base_number_ref = pdict.base_number[p][0];
+                                base_number_alt = 0;
+                        }
+                }
+                //cout << i << "\t" << p << "\t" << ref_hash << "\t" << alt_hash << "\t" << pdict.haplotype[i] << "\t" << base_number_ref << "\t" << base_number_alt << "\t" << pdict.deltaE[i] << "\t" << pdict.switchE[i] << "\t" << pdict.block[i] << "\t" << pdict.span_bound[i] << endl;
+                ofile << i << "\t" << p << "\t" << ref_hash << "\t" << alt_hash << "\t" << pdict.haplotype[i] << "\t" << base_number_ref << "\t" << base_number_alt << "\t" << pdict.deltaE[i] << "\t" << pdict.switchE[i] << "\t" << pdict.block[i] << "\t" << pdict.span_bound[i] << endl;
+        }
+        ofile.close();
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void write_hap_solution( std::unordered_map<std::string,variant_node>& var_dict, std::string hapsolutionFile, coord_dictionary& pdict, std::string chr_choice ) {
